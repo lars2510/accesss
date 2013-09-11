@@ -7,6 +7,7 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var cradle = require('cradle');
 
 var app = express();
 
@@ -30,6 +31,11 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+var connection = new(cradle.Connection)('https://accesss.iriscouch.com', 443, {
+    auth: { username: 'lars', password: 'test1234' }
+});
+var db = connection.database('user');
+
 // configure routing
 app.get('/', routes.index);
 app.get('/users', user.list);
@@ -37,6 +43,29 @@ app.get('/user/:id', function(req, res){
     res.send(req.params.id);
 });
 
+app.get('/couchtest', function(req, res){
+  db.get('lars.meyer@gmail.com', function (err, doc) {
+    res.send(doc);
+  });
+});
+
+/*
+db.save('testkey', {
+      name: 'A Funny Name'
+  }, function (err, res) {
+      if (err) {
+          // Handle error
+          response += ' SAVE ERROR: Could not save record!!\n';
+      } else {
+          // Handle success
+          response += ' SUCESSFUL SAVE\n';
+      }
+      db.get('testkey', function (err, doc) {
+          response += ' DOCUMENT: ' + doc + '\n';
+          http_res.end(response);
+      });
+  });
+*/
 // create server instance
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
