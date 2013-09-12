@@ -46,6 +46,11 @@ app.get('/user/:id', function(req, res){
 app.get('/couchtest', function(req, res){
   dbHandler.getUser("lars.meyer@gmail.com", res);
 });
+app.post('/fbLoginData', function(req, res){
+  if(req && req.body) {
+    //dbHandler.setUser(req.body);
+  }
+});
 
 // create server instance
 http.createServer(app).listen(app.get('port'), function(){

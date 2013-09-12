@@ -22,6 +22,19 @@ module.exports = {
   	db.get(userName, function (err, doc) {
 	  	res.send(doc.bday);
 	  });
+  },
+
+  setUser: function (userObj) {
+    db.save(userObj.email, {
+      name: userObj.name,
+      likes: userObj.user_likes
+    }, function (err, res) {
+      if (err) {
+        console.log('SAVE ERROR: Could not save record!!');
+      } else {
+        console.log('SUCESSFUL SAVE');
+      }
+    });
   }
 };
 
@@ -58,22 +71,4 @@ var saveView = function () {
       force: 'dark', name: 'Luke'
   }, function (err, res) {
       // Handle response
-  }); +/
-
-/*
-db.save('testkey', {
-      name: 'A Funny Name'
-  }, function (err, res) {
-      if (err) {
-          // Handle error
-          response += ' SAVE ERROR: Could not save record!!\n';
-      } else {
-          // Handle success
-          response += ' SUCESSFUL SAVE\n';
-      }
-      db.get('testkey', function (err, doc) {
-          response += ' DOCUMENT: ' + doc + '\n';
-          http_res.end(response);
-      });
-  });
-*/
+  }); */
