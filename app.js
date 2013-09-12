@@ -7,10 +7,12 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-var cradle = require('cradle');
 
+var dbHandler = require('./service/database');
+
+// init app and db connection
 var app = express();
-
+dbHandler.init('user');
 
 //set environment variables 
 app.set('port', process.env.PORT || 3000);
@@ -18,12 +20,16 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 // configute app
-app.use(express.favicon());
-app.use(express.logger('dev'));
-app.use(express.bodyParser());
-app.use(express.methodOverride());
-app.use(app.router);
-app.use(express.static(path.join(__dirname, 'public')));
+app.configure(function () {
+  app.use(express.favicon());
+  app.use(express.logger('dev'));
+  app.use(express.bodyParser());
+  app.use(express.cookieParser());
+  app.use(express.session({ secret: 'Xdce24f1f14fd' }));
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(express.static(path.join(__dirname, 'public')));
+});
 
 // development only
 if ('development' == app.get('env')) {
@@ -31,41 +37,16 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-var connection = new(cradle.Connection)('https://accesss.iriscouch.com', 443, {
-    auth: { username: 'lars', password: 'test1234' }
-});
-var db = connection.database('user');
-
 // configure routing
 app.get('/', routes.index);
 app.get('/users', user.list);
 app.get('/user/:id', function(req, res){
-    res.send(req.params.id);
+  res.send(req.params.id);
 });
-
 app.get('/couchtest', function(req, res){
-  db.get('lars.meyer@gmail.com', function (err, doc) {
-    res.send(doc);
-  });
+  dbHandler.getUser("lars.meyer@gmail.com", res);
 });
 
-/*
-db.save('testkey', {
-      name: 'A Funny Name'
-  }, function (err, res) {
-      if (err) {
-          // Handle error
-          response += ' SAVE ERROR: Could not save record!!\n';
-      } else {
-          // Handle success
-          response += ' SUCESSFUL SAVE\n';
-      }
-      db.get('testkey', function (err, doc) {
-          response += ' DOCUMENT: ' + doc + '\n';
-          http_res.end(response);
-      });
-  });
-*/
 // create server instance
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
