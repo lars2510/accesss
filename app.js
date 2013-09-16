@@ -46,9 +46,18 @@ app.get('/user/:id', function(req, res){
 app.get('/couchtest', function(req, res){
   dbHandler.getUser("lars.meyer@gmail.com", res);
 });
-app.post('/fbLoginData', function(req, res){
+app.get('/getFbUserData', function(req, res){
+  
+  if (req.query && req.query.userId) {
+    dbHandler.getUser(req.query.userId, res);
+    //dbHandler.getUser("lars.meyer@gmail.com", res);
+  } 
+});
+app.post('/saveFbUserData', function(req, res){
   if(req && req.body) {
-    //dbHandler.setUser(req.body);
+    // eventuell noch geoposition der nutzer erfragen und alle aktiven auf karte anzeigen
+    console.log('user wird gespeichert');
+    // dbHandler.setUser(req.body);
   }
 });
 

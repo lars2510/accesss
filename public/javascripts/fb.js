@@ -7,12 +7,11 @@ window.fbAsyncInit = function() {
   });
   FB.Event.subscribe('auth.authResponseChange', function(response) {
     if (response.authResponse) {
-      testAPI();
-    } else {
-      console.log('User cancelled login or did not fully authorize.');
+      fbService.initUserData(response.authResponse.userID);
     }
   });
 };
+
 (function(d, s, id){
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) {return;}
@@ -21,28 +20,13 @@ window.fbAsyncInit = function() {
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-function testAPI() {
-  console.log('Welcome!  Fetching your information.... ');
-  FB.api('/me?fields=id,name,email,friends,user_likes', function(response) {
-    $.ajax({
-      type: "POST",
-      url: "/fbLoginData",
-      data: response,
-      dataType: 'json'
-    });
-  });
-}
 
-/** for own button 
-function fbLogin() {
+$('#fblogin').live('click', function(e) {
   FB.login(function(response) {
     if (response.authResponse) {
-      console.log('Welcome!  Fetching your information.... ');
-      FB.api('/me', function(response) {
-        console.log('Good to see you, ' + response.name + '.');
-      });
+      console.log('successfully logged in');
     } else {
       console.log('User cancelled login or did not fully authorize.');
     }
   }, {scope: 'email,user_likes'});
-} **/
+});

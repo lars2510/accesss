@@ -1,5 +1,24 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  #foo(data-role='page')
+    div(data-role='header')
+        h1 Foo
+    div(data-role='content')
+      
+      label(for='text-basic') Text input:
+      input#text-basic(type='text', name='text-basic', value='')      
+      p
+        a#fblogin(data-role='button' data-theme='b' data-transition='slide') bar
+    div(data-role='footer')
+      h4 Page Footer
+
+  #bar(data-role='page')
+    div(data-role='header')
+      h1#mainTitle Bar
+    div(data-role='content')
+      p I'm the second in the source order so I'm hidden when the page loads. I'm just shown if a link that clicked.
+      p
+        a(href='#foo') Back to foo
+    div(data-role='footer')
+      h4 Page Footer

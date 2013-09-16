@@ -20,17 +20,22 @@ module.exports = {
 
   getUser: function (userName, res) {
   	db.get(userName, function (err, doc) {
-	  	res.send(doc.bday);
+      console.log('trying to get user data');
+      res.send({});
+	  	//res.send(doc.bday);
 	  });
   },
 
   setUser: function (userObj) {
     db.save(userObj.email, {
       name: userObj.name,
-      likes: userObj.user_likes
+      //likes: userObj.user_likes,
+      userId: userObj.id,
+      resource: 'user'
     }, function (err, res) {
       if (err) {
         console.log('SAVE ERROR: Could not save record!!');
+        console.log(err);
       } else {
         console.log('SUCESSFUL SAVE');
       }
@@ -38,8 +43,8 @@ module.exports = {
   }
 };
 
-var getView = function () {
-	db.view('user/byUsername', { key: ['lars', 'oktober'] }, function (err, doc) {
+var getUserById = function () {
+	db.view('user/byUserId', { key: ['lars', 'oktober'] }, function (err, doc) {
      console.dir(doc);
   });
 }
@@ -47,9 +52,9 @@ var getView = function () {
 var saveView = function () {
 	db.save('_design/user', {
     views: {
-      byUsername: {
+      byUserId: {
         map: function (doc) { 
-          if (doc.resource === 'user' && doc.name) {
+          if (doc.resource === 'user' && doc.email) {
             var key = [doc.name, doc.bday];
             emit(key, doc);
           }
