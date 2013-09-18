@@ -1,25 +1,38 @@
 
+/** 
+* nodejs server configuration
+*
+* author: lars schuettemeyer 
+**/
+
 /**
- * Module dependencies.
+ * Module dependencies
  */
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
-
-var dbHandler = require('./service/database');
-
-// init app and db connection
+var dbService = require('./service/databaseService');
 var app = express();
-dbHandler.init('user');
 
-//set environment variables 
+/** 
+* init database connection
+* the init function will configure a new couchdb with database and views 
+**/
+dbService.initConnection('user');
+//dbService.init();
+
+/**
+* set environment variables
+**/
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
-// configute app
+/**
+* configute app
+**/
 app.configure(function () {
   app.use(express.favicon());
   app.use(express.logger('dev'));
@@ -31,37 +44,43 @@ app.configure(function () {
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
-// development only
 if ('development' == app.get('env')) {
-  console.log('currently in development environment');
+  console.log('info: app - development environment');
   app.use(express.errorHandler());
 }
 
-// configure routing
+/**
+* configure routing
+**/
+// index page
 app.get('/', routes.index);
-app.get('/users', user.list);
 app.get('/user/:id', function(req, res){
   res.send(req.params.id);
 });
-app.get('/couchtest', function(req, res){
-  dbHandler.getUser("lars.meyer@gmail.com", res);
-});
+
+/**
+* get facebook user data from database if user already exists
+* @return {object} userObj the user object
+*/
 app.get('/getFbUserData', function(req, res){
-  
-  if (req.query && req.query.userId) {
-    dbHandler.getUser(req.query.userId, res);
-    //dbHandler.getUser("lars.meyer@gmail.com", res);
+  console.log('info: app - get user data from database');
+  if (req.query && req.query.id) {
+    dbService.getUserById(req.query.id, res);
   } 
 });
+
+// save facebook user data to database
 app.post('/saveFbUserData', function(req, res){
+  console.log('info: app - save new user to database');
   if(req && req.body) {
     // eventuell noch geoposition der nutzer erfragen und alle aktiven auf karte anzeigen
-    console.log('user wird gespeichert');
-    // dbHandler.setUser(req.body);
+    dbService.saveUser(req.body, res);
   }
 });
 
-// create server instance
+/**
+* create server instance
+**/
 http.createServer(app).listen(app.get('port'), function(){
-  console.log('Express server listening on port ' + app.get('port'));
+  console.log('info: express server stated. listening on port ' + app.get('port'));
 });

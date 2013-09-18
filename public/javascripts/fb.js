@@ -7,6 +7,7 @@ window.fbAsyncInit = function() {
   });
   FB.Event.subscribe('auth.authResponseChange', function(response) {
     if (response.authResponse) {
+      console.log('info: fb - user is logged in');
       fbService.initUserData(response.authResponse.userID);
     }
   });
