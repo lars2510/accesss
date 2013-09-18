@@ -54,12 +54,9 @@ if ('development' == app.get('env')) {
 **/
 // index page
 app.get('/', routes.index);
-app.get('/user/:id', function(req, res){
-  res.send(req.params.id);
-});
 
 /**
-* get facebook user data from database if user already exists
+* route: get facebook user data from database if user already exists
 * @return {object} userObj the user object
 */
 app.get('/getFbUserData', function(req, res){

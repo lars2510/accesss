@@ -44,7 +44,7 @@ var fbService = {
 
   _initAccesssWebsite: function(userData) {
     accesss.initMainPage(userData);
-    this._getFbData('/picture?redirect=false', accesss.setUserImage);
+    //this._getFbData('/picture?redirect=false', accesss.setUserImage);
   },
 
   _getUserDataFromFb: function() {

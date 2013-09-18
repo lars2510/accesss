@@ -1,3 +1,10 @@
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
@@ -5,4 +12,84 @@ body {
 
 a {
   color: #00B7FF;
+}
+
+#mainPage, #maps-wrapper, #mainContent {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+}
+
+.ui-header, .ui-footer {
+  height: 40px;
+  position: absolute;
+  left: 0;
+  width: 100%;
+}
+
+.ui-header {
+  top: 0;
+}
+
+.ui-footer {
+  bottom: 0;
+}
+
+#mainContent {
+  position: relative;
+  overflow: hidden;
+  -webkit-transform: translateZ(0);
+}
+
+#map-canvas {
+  position: absolute;
+  left: 0px;
+  top: 40px;
+  bottom: 30px;
+  right: 0px;
+  overflow: hidden;
+  z-index: 0;
+}
+
+#directions-panel {
+  height: 100%;
+  float: right;
+  width: 390px;
+  overflow: auto;
+}
+
+#control {
+  background: #fff;
+  padding: 5px;
+  font-size: 14px;
+  font-family: Arial;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4);
+  display: none;
+}
+
+#control .nav-elem {
+  display: inline-block;
+}
+
+#control .nav-elem > div,
+#control .nav-elem > label  {
+  margin: 0 4px 0 0;
+  display: inline-block; 
+}
+
+@media print {
+  html, body {
+    height: auto;
+  }
+  
+  #map-canvas {
+    height: 500px;
+    margin: 0;
+  }
+
+  #directions-panel {
+    float: none;
+    width: auto;
+  }
 }

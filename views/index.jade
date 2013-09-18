@@ -1,25 +1,41 @@
 extends layout
 
 block content
-  #foo(data-role='page')
+  #loginPage(data-role='page')
     div(data-role='header')
         h1 Foo
     div(data-role='content')
-      
       label(for='text-basic') Text input:
-      input#text-basic(type='text', name='text-basic', value='')      
+      input#text-basic(type='text', name='text-basic', value='')
       p
         a#fblogin(data-role='button' data-theme='b' data-transition='slide') bar
     div(data-role='footer')
       h4 Page Footer
 
-  #bar(data-role='page')
+  #mainPage(data-role='page')
     div(data-role='header')
+      a(href='#loginPage') Zurück zum Login
       h1#mainTitle Bar
-    div(data-role='content')
-      p I'm the second in the source order so I'm hidden when the page loads. I'm just shown if a link that clicked.
-      p
-        a(href='#foo') Back to foo
-      img#userImage
+      a(href='#directionPage' data-role='button' data-icon="arrow-r" data-iconpos="right" data-inline="true" data-transition='slide') Route
+    div#mainContent(data-role='content')
+      #control
+        #js_start.nav-elem
+          label(for='text-basic') Start:
+          input#text-basic(type='text', name='text-basic', value='')
+        #js_end.nav-elem
+          label(for='text-basic') Ziel:
+          input#text-basic(type='text', name='text-basic', value='')
+        #js_mode.nav-elem
+          b Modus 
+          select#mode(onchange='calcRoute();')
+            option(value='DRIVING') Driving
+            option(value='WALKING') Walking
+            option(value='BICYCLING') Bicycling
+            option(value='TRANSIT') Transit
+      #map-canvas
+      div  
+        img#userImage
     div(data-role='footer')
       h4 Page Footer
+  #directionPage(data-role='page')
+    #directions-panel
