@@ -8,7 +8,7 @@ window.fbAsyncInit = function() {
   FB.Event.subscribe('auth.authResponseChange', function(response) {
     if (response.authResponse) {
       console.log('info: fb - user is logged in');
-      fbService.initUserData(response.authResponse.userID);
+      dataService.initUserData(response.authResponse.userID);
     }
   });
 };
@@ -25,9 +25,9 @@ window.fbAsyncInit = function() {
 $('#fblogin').live('click', function(e) {
   FB.login(function(response) {
     if (response.authResponse) {
-      console.log('successfully logged in');
+      console.log('info: fb - successfully logged in');
     } else {
-      console.log('User cancelled login or did not fully authorize.');
+      console.log('error: fb - user cancelled login or did not fully authorize');
     }
   }, {scope: 'email,user_likes'});
 });

@@ -59,12 +59,11 @@ app.get('/', routes.index);
 * route: get facebook user data from database if user already exists
 * @return {object} userObj the user object
 */
-app.get('/getFbUserData', function(req, res){
+app.get('/getFbUserData/:id', function(req, res){
   console.log('info: app - get user data from database');
-  if (req.query && req.query.id) {
-    dbService.getUserById(req.query.id, res);
-  } 
+  dbService.getUserById(req.params.id, res);
 });
+
 
 // save facebook user data to database
 app.post('/saveFbUserData', function(req, res){

@@ -8,10 +8,10 @@ var connection;
 var db;
 
 // Database credentials
-var dbUrl = 'https://accesss.iriscouch.com',
-    dbPort = '443',
-    //dbUrl = 'http://127.0.0.1',
-    //dbPort = '5984'
+var //dbUrl = 'https://accesss.iriscouch.com',
+    //dbPort = '443',
+    dbUrl = 'http://127.0.0.1',
+    dbPort = '5984'
 		dbUsername = 'lars',
 		dbPassword = 'test1234';
 

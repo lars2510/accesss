@@ -78,6 +78,19 @@ a {
   display: inline-block; 
 }
 
+.pac-container:after{ 
+  content:none !important; 
+}
+
+.carbook {
+  color: #fff;
+  background: #44f;
+  text-shadow: none;
+  float: right;
+  margin-top: 3px;
+  cursor: pointer;
+}
+
 @media print {
   html, body {
     height: auto;

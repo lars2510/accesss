@@ -1,4 +1,4 @@
-var fbService = {
+var dataService = {
 
   initUserData: function(userId) {
     this._getUserData(userId);
@@ -13,9 +13,7 @@ var fbService = {
     var self = this;
     $.ajax({
       type: 'GET',
-      url: '/getFbUserData',
-      data: {id: userId},
-      dataType: 'json'
+      url: '/getFbUserData/' + userId
     }).done(function(userData) {
       if (userData.length > 0) {
         self._initAccesssWebsite(userData[0].value)
