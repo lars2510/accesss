@@ -1,19 +1,26 @@
 var Gmaps = function() {
-  var directionsDisplay;
-  var directionsService;
-  var map;
-  var car2goData;
-  var markerInfoPopup;
-  var selectedCar2GoPos = [];
+
+  var directionsDisplay,
+      directionsService,
+      map,
+      car2goData,
+      markerInfoPopup,
+      geocoder,
+      trafficLayer,
+      myPosition,
+      searchBoxes = [],
+      selectedCar2GoPos = [];
 
   /**
   * init default configuration for gmaps
   */
   this.init = function() {
-    // init dispay for maps and directions and service for route information
+    // init maps services
     directionsDisplay = new google.maps.DirectionsRenderer();
     directionsService = new google.maps.DirectionsService();
     markerInfoPopup = new google.maps.InfoWindow();
+    geocoder = new google.maps.Geocoder();
+    trafficLayer = new google.maps.TrafficLayer();
     
     // init gmaps position, map-canva and direction panel
     var hamburg = new google.maps.LatLng(53.55454, 9.99185);
@@ -32,24 +39,36 @@ var Gmaps = function() {
     control.style.display = 'block';
 
     // init auto completion
-    new google.maps.places.SearchBox($('#js_start input')[0]);
-    new google.maps.places.SearchBox($('#js_end input')[0]);
+    searchBoxes[0] = new google.maps.places.SearchBox($('#js_start input')[0]);
+    searchBoxes[1] = new google.maps.places.SearchBox($('#js_end input')[0]);
 
     // register event listener
     registerListener();
 
-    // init car to go data
-    if(car2goData) {
-      initCar2Go(car2goData);
-    } else {
-      car2goApi.getLocalData('hamburg', initCar2Go);
-    };
   };
 
   var initCar2Go = function(data) {
     car2goData = data;
     var image = 'images/map_pin_car.png';
     var myLatLng;
+
+    // get current position
+    var address = $('#js_start input').val();
+
+    if(address.length > 0) {
+      geocoder.geocode({'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          if (results[0]) {
+            myPosition = results[0].geometry.location
+            map.setCenter(myPosition);
+          }
+        } else {
+          console.log("error: maps - geocoder failed due to: " + status);
+        }
+      });
+    }
+
+    // set car2go marker
     _.each(car2goData.placemarks, function(car) {
       if (!(car.interior === 'UNACCEPTABLE' || car.exterior ==='UNACCEPTABLE')) {
         myLatLng = new google.maps.LatLng(car.coordinates[1], car.coordinates[0]);
@@ -82,12 +101,67 @@ var Gmaps = function() {
     console.log(selectedCar2GoPos);
   }
 
+
+  var routeRequest = function() {    
+    var selectedMode = $('#mode').val();
+    var sharingType;    
+    var modeArray = selectedMode.split('-');
+
+    if (modeArray.length == 2) {
+      selectedMode = modeArray[0];
+      sharingType = modeArray[1];
+    }
+
+    switch(sharingType) {
+      case 'CARSHARING':
+        if(car2goData) {
+          initCar2Go(car2goData);
+        } else {
+          car2goApi.getLocalData('hamburg', initCar2Go);
+        };
+        break;
+      case 'CARPOOLING':
+        console.log('carpooling');
+        break;
+      default:
+        calcDirection(selectedMode);
+    }
+    
+  };
+
   /**
   * calculate gmaps route 
   */
-  var calcRoute = function() {
+  var calcDirection = function(selectedMode, waypts) {
     var start = $('#js_start input').val();
     var end = $('#js_end input').val();
+
+    // add trafic layer if user driving by car
+    if(selectedMode === 'DRIVING') {
+      trafficLayer.setMap(map);
+    } else {
+      trafficLayer.setMap(null);
+    }
+
+    var request = {
+        origin:start,
+        destination:end,
+        travelMode: google.maps.TravelMode[selectedMode]
+    };
+    if (waypts && waypts.length) {
+      request.waypoints = waypts;
+      request.optimizeWaypoints = true;
+    }
+    
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(response);
+        console.log(response.routes[0].legs[0].distance.text);
+      }
+    });
+  };
+
+  var getRouteWithWaypts = function() {
     var p2start = {
           location:"hamburg, altona",
           stopover:true
@@ -99,37 +173,64 @@ var Gmaps = function() {
     var waypts = [];
     waypts.push(p2start);
     waypts.push(p2end);
+    calcDirection('DRIVING', waypts);
+  };
 
-    var selectedMode = document.getElementById('mode').value;
-    
-    if(selectedMode === 'DRIVING') {
-      (new google.maps.TrafficLayer()).setMap(map);
-    }
+  var displayCurrentLocation = function(pos) {
+    console.log(pos.coords.latitude);
+    console.log(pos.coords.longitude);
+    myLatLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+    var marker = new google.maps.Marker({
+      position: myLatLng,
+      map: map
+    });
+    map.setZoom(16);
+    map.setCenter(myLatLng);
 
-    var request = {
-        origin:start,
-        destination:end,
-        waypoints: waypts,
-        optimizeWaypoints: true,
-        travelMode: google.maps.TravelMode[selectedMode]
-    };
-    directionsService.route(request, function(response, status) {
-      if (status == google.maps.DirectionsStatus.OK) {
-        directionsDisplay.setDirections(response);
-        console.log(response.routes[0].legs[0].distance.text);
+    geocoder.geocode({'latLng': myLatLng}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          $('#js_start input').val(results[0].formatted_address);
+        }
+      } else {
+        console.log("error: maps - geocoder failed due to: " + status);
       }
     });
-  };
+
+  }
+
+  var getCurLocation = function() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(displayCurrentLocation, function(err) {
+        console.log("error: maps - geoloaction error");
+        console.log(err);
+      });
+    } else {
+      console.log("error: maps - geolocation not supported");
+    }
+  }
 
   /**
   * register gmaps event listener for route navigation
   */
   var registerListener = function() {
-    $('#js_mode select').on('change', calcRoute);
+
+    // start route calculation
+    $('#js_mode select').on('change', routeRequest);
     $('#js_end input').on('keypress', function (event) {
       if(event.which == '13'){
-        calcRoute();
+        routeRequest();
       }
+    });
+
+    // get geo location from user
+    $('#js_geolocation').on('click', getCurLocation);
+
+    // location based search result
+    google.maps.event.addListener(map, 'bounds_changed', function() {
+      var bounds = map.getBounds();
+      searchBoxes[0].setBounds(bounds);
+      searchBoxes[1].setBounds(bounds);
     });
   };
 

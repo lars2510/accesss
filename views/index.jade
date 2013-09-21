@@ -13,12 +13,13 @@ block content
       h4 Page Footer
 
   #mainPage(data-role='page')
-    div(data-role='header')
+    div(data-role='header' data-theme='b')
       a(href='#loginPage') Zurück zum Login
       h1#mainTitle Bar
       a(href='#directionPage' data-role='button' data-icon="arrow-r" data-iconpos="right" data-inline="true" data-transition='slide') Route
     div#mainContent(data-role='content')
       #control
+        #js_geolocation.geo
         #js_start.nav-elem
           label(for='text-basic') Start:
           input#text-basic(type='text', name='text-basic', value='')
@@ -26,16 +27,18 @@ block content
           label(for='text-basic') Ziel:
           input#text-basic(type='text', name='text-basic', value='')
         #js_mode.nav-elem
-          b Modus 
+          b Ich 
           select#mode
-            option(value='WALKING') Walking
-            option(value='BICYCLING') Bicycling
-            option(value='DRIVING') Driving
-            option(value='TRANSIT') Transit
+            option(value='WALKING') gehe zu Fuß
+            option(value='BICYCLING') nutze das Fahrrad
+            option(value='DRIVING') nehme mein Auto
+            option(value='DRIVING-CARSHARING') nutze Car-Sharing
+            option(value='DRIVING-CARPOOLING') suche eine Mitfahrgelegenheit
+            option(value='TRANSIT') fahre mit der Bahn
       #map-canvas
       div  
         img#userImage
-    div(data-role='footer')
+    div(data-role='footer' data-theme='b')
       h4 Page Footer
   #directionPage(data-role='page')
     #directions-panel

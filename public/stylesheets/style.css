@@ -25,6 +25,7 @@ a {
   position: absolute;
   left: 0;
   width: 100%;
+  -webkit-font-smoothing: antialiased;
 }
 
 .ui-header {
@@ -33,6 +34,10 @@ a {
 
 .ui-footer {
   bottom: 0;
+}
+
+.ui-select .ui-btn-inner {
+  padding: .5em 10px;
 }
 
 #mainContent {
@@ -54,7 +59,6 @@ a {
 #directions-panel {
   height: 100%;
   float: right;
-  width: 390px;
   overflow: auto;
 }
 
@@ -78,6 +82,16 @@ a {
   display: inline-block; 
 }
 
+#control .geo {
+  width: 45px;
+  height: 45px;
+  background: #fff url('/images/geo-icon.png') no-repeat 0 0;
+  vertical-align: top;
+  margin: 0 5px 0 0;
+  cursor: pointer;
+  display: inline-block;
+}
+
 .pac-container:after{ 
   content:none !important; 
 }
@@ -95,14 +109,5 @@ a {
   html, body {
     height: auto;
   }
-  
-  #map-canvas {
-    height: 500px;
-    margin: 0;
-  }
 
-  #directions-panel {
-    float: none;
-    width: auto;
-  }
 }
