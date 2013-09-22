@@ -20,24 +20,33 @@ a {
   padding: 0;
 }
 
-.ui-header, .ui-footer {
+#mainPage .ui-header, 
+#mainPage .ui-footer {
   height: 40px;
   position: absolute;
   left: 0;
   width: 100%;
+}
+
+.ui-header, 
+.ui-footer {
   -webkit-font-smoothing: antialiased;
 }
 
-.ui-header {
+#mainPage .ui-header {
   top: 0;
 }
 
-.ui-footer {
+#mainPage .ui-footer {
   bottom: 0;
 }
 
 .ui-select .ui-btn-inner {
   padding: .5em 10px;
+}
+
+.ui-btn-inner {
+  z-index: 2;
 }
 
 #mainContent {

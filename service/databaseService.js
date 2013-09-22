@@ -61,7 +61,7 @@ module.exports = {
         console.log('error: databaseService - could not save record');
         console.log(err);
       } else {
-        console.log('info: databaseService - new user sucessfull saved');
+        console.log('info: databaseService - new user successfull saved');
         res.send(userObj);
       }
     });
