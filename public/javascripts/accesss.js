@@ -1,17 +1,13 @@
-var accesss = (function(mapHandler){
+var accesss = (function(mainController){
   
-  google.maps.event.addDomListener(window, 'load', mapHandler.init);
-  
+  google.maps.event.addDomListener(window, 'load', mainController.init);
+
   return {
     initMainPage: function(userData) {
-      $('#mainTitle').html(userData.name);
-      $.mobile.changePage('#mainPage', { transition: 'slide' } );
-      $("#myDropdown").attr("selectedIndex", -1);
-      this.mapHandler.resizeMap();
+      $.mobile.changePage('#mainPage', {transition: 'slide'});
+      mainController.resizeMap();
+      mainController.setUserData(userData);
     },
-    setUserImage: function(img) {
-      $('#userImage').attr('src', img.data.url);
-    },
-    mapHandler: mapHandler
+    mainController: mainController
   }
-}(new MapHandler()));
+}(new MainController()));

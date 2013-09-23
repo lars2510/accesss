@@ -29,7 +29,8 @@ a {
 }
 
 .ui-header, 
-.ui-footer {
+.ui-footer,
+.ui-btn-text {
   -webkit-font-smoothing: antialiased;
 }
 

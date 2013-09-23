@@ -9,14 +9,15 @@ html
     script(type="text/javascript" src="/javascripts/ext/jquery.mobile-1.3.2.min.js")
     script(type="text/javascript" src="/javascripts/ext/underscore-min.js")
     script(type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places")
-    script(type="text/javascript" src="/javascripts/dataService.js")
-    script(type="text/javascript" src="/javascripts/MapHandler.js")
+    script(type="text/javascript" src="/javascripts/service/dataService.js")
+    script(type="text/javascript" src="/javascripts/service/car2goAPI.js")
+    script(type="text/javascript" src="/javascripts/MainController.js")
     script(type="text/javascript" src="/javascripts/accesss.js")
-    script(type="text/javascript" src="/javascripts/car2goAPI.js")
+    script(type="text/javascript" src="/javascripts/RouteHandler.js")
     script(type="text/javascript" src="/javascripts/CarSharingHandler.js")
+    script(type="text/javascript" src="/javascripts/CarPoolingHandler.js")
   body
     #fb-root
-    script(type="text/javascript"
-      src="javascripts/fb.js")
+    script(type="text/javascript" src="/javascripts/service/fbService.js")
     <!--| <fb:login-button show-faces="true" width="200" max-rows="1" scope="email,user_likes"></fb:login-button>-->
     block content

@@ -10,8 +10,8 @@ var db;
 // Database credentials
 var dbUrl = 'https://accesss.iriscouch.com',
     dbPort = '443',
-    // dbUrl = 'http://127.0.0.1',
-    // dbPort = '5984'
+    dbUrl = 'http://127.0.0.1',
+    dbPort = '5984'
 		dbUsername = 'lars',
 		dbPassword = 'test1234';
 
@@ -63,6 +63,18 @@ module.exports = {
       } else {
         console.log('info: databaseService - new user successfull saved');
         res.send(userObj);
+      }
+    });
+  },
+
+  saveRoute: function (routeObj, res) {
+    db.save(routeObj, function (err, dbres) {
+      if (err) {
+        console.log('error: databaseService - could not save route');
+        console.log(err);
+      } else {
+        console.log('info: databaseService - new route successfull saved');
+        res.send(routeObj);
       }
     });
   },

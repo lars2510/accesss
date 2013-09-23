@@ -1,14 +1,37 @@
-var CarSharingHandler = function(map, geocoder, directionsService, directionsDisplay) {
-  
+var CarSharingHandler = function(map, directionsService, directionsDisplay) {
+
   var myPosition;
   var markerInfoPopup = new google.maps.InfoWindow();
+  var geocoder = new google.maps.Geocoder();
   var carPos;
+  var self = this;
+  
+  self.carData;
 
-  this.initCars = function(car2goData) {
+  this.init = function() {
+    if(self.carData) {
+      // use cached data
+      console.log('cached');
+      self.initCars(self.carData);
+    } else {
+      // get new data from car2go api for hamburg
+      car2goApi.getLocalData('hamburg', self.initCars);
+      console.log('new data');
+    };
+  }
+
+  this.getCarPos = function() {
+    return carPos;
+  };
+
+  this.initCars = function(carData) {
     var image = 'images/car-marker.png';
     var address = $('#js_start input').val();
     var myLatLng;
     
+    if(!self.carData) {
+      self.carData = carData;
+    }
 
     if(address.length > 0) {
       geocoder.geocode({'address': address}, function(results, status) {
@@ -23,26 +46,25 @@ var CarSharingHandler = function(map, geocoder, directionsService, directionsDis
       });
     }
 
-    // set car2go marker
-    _.each(car2goData.placemarks, function(car) {
-      if (!(car.interior === 'UNACCEPTABLE' || car.exterior ==='UNACCEPTABLE')) {
-        myLatLng = new google.maps.LatLng(car.coordinates[1], car.coordinates[0]);
-        var marker = new google.maps.Marker({
-              position: myLatLng,
-              map: map,
-              icon: image
-        });
-        var infoText = car.address + 
-                        '<br />Tank: ' + car.fuel + '%' +
-                        '<br />Kennzeichen: ' + car.name + 
-                        '<br /><span class="carbook" onClick="accesss.mapHandler.startCarSharingRoute();">book now!</span>';
-        _attachDetailLayer(marker, infoText);
-      }
+    // filter cars, only good interior and exterior
+    var acceptableCars = _.filter(carData.placemarks, function(car){ 
+      return !(car.interior === 'UNACCEPTABLE' || car.exterior ==='UNACCEPTABLE'); 
     });
-  };
 
-  this.getCarPos = function() {
-    return carPos;
+    // set car2go marker
+    _.each(acceptableCars, function(car) {
+      myLatLng = new google.maps.LatLng(car.coordinates[1], car.coordinates[0]);
+      var marker = new google.maps.Marker({
+            position: myLatLng,
+            map: map,
+            icon: image
+      });
+      var infoText = car.address + 
+                      '<br />Tank: ' + car.fuel + '%' +
+                      '<br />Kennzeichen: ' + car.name + 
+                      '<br /><span class="carbook" onClick="accesss.mainController.startCarSharingRoute();">buchen</span>';
+      _attachDetailLayer(marker, infoText);
+    });
   };
 
   var _attachDetailLayer = function(marker, text) {
@@ -71,5 +93,4 @@ var CarSharingHandler = function(map, geocoder, directionsService, directionsDis
       }
     });    
   };
-  
 };

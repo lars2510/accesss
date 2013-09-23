@@ -59,18 +59,25 @@ app.get('/', routes.index);
 * route: get facebook user data from database if user already exists
 * @return {object} userObj the user object
 */
-app.get('/getFbUserData/:id', function(req, res){
+app.get('/getUserData/:id', function(req, res){
   console.log('info: app - get user data from database');
   dbService.getUserById(req.params.id, res);
 });
 
 
 // save facebook user data to database
-app.post('/saveFbUserData', function(req, res){
+app.post('/saveUserData', function(req, res){
   console.log('info: app - save new user to database');
   if(req && req.body) {
-    // eventuell noch geoposition der nutzer erfragen und alle aktiven auf karte anzeigen
     dbService.saveUser(req.body, res);
+  }
+});
+
+// save route data to database
+app.post('/saveRouteData', function(req, res){
+  console.log('info: app - save new route to database');
+  if(req && req.body) {
+    dbService.saveRoute(req.body, res);
   }
 });
 
