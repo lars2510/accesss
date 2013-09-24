@@ -53,6 +53,7 @@ var MainController = function() {
     var carPos = carSharingHandler.getCarPos();
     if(carPos) {
       routeHandler.calcRoute('DRIVING', carPos);
+      carSharingHandler.removeMarker();
     } else {
       console.log('error: MainController - CarSharing pos not available');
     }
@@ -87,8 +88,7 @@ var MainController = function() {
         carSharingHandler.init();
         break;
       case 'CARPOOLING':
-        var carPoolingHandler = new CarPoolingHandler(routeHandler);
-        carPoolingHandler.getSuitableRoutes(_getStartAndEndPoint());
+        routeHandler.matchRoute(_getRoutePoints(), 'CARPOOLING');
         break;
       default:
         routeHandler.calcRoute(selectedMode);
@@ -127,7 +127,7 @@ var MainController = function() {
     }
   };
 
-  var _getStartAndEndPoint = function() {
+  var _getRoutePoints = function() {
     return {
       start: $('#js_start input').val(),
       end: $('#js_end input').val()

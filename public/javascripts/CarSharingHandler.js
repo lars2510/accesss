@@ -1,8 +1,10 @@
 var CarSharingHandler = function(map, directionsService, directionsDisplay) {
 
   var myPosition;
+  var myMarker;
   var markerInfoPopup = new google.maps.InfoWindow();
   var geocoder = new google.maps.Geocoder();
+  var markerList = [];
   var carPos;
   var self = this;
   
@@ -11,12 +13,10 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
   this.init = function() {
     if(self.carData) {
       // use cached data
-      console.log('cached');
       self.initCars(self.carData);
     } else {
       // get new data from car2go api for hamburg
       car2goApi.getLocalData('hamburg', self.initCars);
-      console.log('new data');
     };
   }
 
@@ -39,9 +39,15 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
           if (results[0]) {
             myPosition = results[0].geometry.location
             map.setCenter(myPosition);
+            myMarker = new google.maps.Marker({
+                position: myPosition,
+                map: map,
+                title: 'Mein Startpunkt!',
+                animation: google.maps.Animation.DROP
+            });
           }
         } else {
-          console.log("error: maps - geocoder failed due to: " + status);
+          console.warn("error: maps - geocoder failed due to: " + status);
         }
       });
     }
@@ -59,6 +65,7 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
             map: map,
             icon: image
       });
+      markerList.push(marker);
       var infoText = car.address + 
                       '<br />Tank: ' + car.fuel + '%' +
                       '<br />Kennzeichen: ' + car.name + 
@@ -67,11 +74,19 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
     });
   };
 
+  this.removeMarker = function() {
+    _.each(markerList, function(marker) {
+      marker.setMap(null);
+    });
+    markerList = [];
+  }
+
   var _attachDetailLayer = function(marker, text) {
     google.maps.event.addListener(marker, 'click', function() {
+      myMarker.setMap(null);
       markerInfoPopup.setContent(text);
       markerInfoPopup.open(map, marker);
-      carPos = new google.maps.LatLng(marker.position.ob, marker.position.pb);
+      carPos = marker.getPosition().lat() + ', ' + marker.getPosition().lng();
       _getWalkingDistance(carPos);
     });
   };

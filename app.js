@@ -20,8 +20,7 @@ var app = express();
 * init database connection
 * the init function will configure a new couchdb with database and views 
 **/
-dbService.initConnection('user');
-//dbService.init();
+dbService.initConnection('accesss');
 
 /**
 * set environment variables
@@ -60,14 +59,16 @@ app.get('/', routes.index);
 * @return {object} userObj the user object
 */
 app.get('/getUserData/:id', function(req, res){
-  console.log('info: app - get user data from database');
   dbService.getUserById(req.params.id, res);
+});
+
+app.get('/getRouteData/:routeType', function(req, res){
+  dbService.getAvailableRoutes(req.params.routeType, res);
 });
 
 
 // save facebook user data to database
 app.post('/saveUserData', function(req, res){
-  console.log('info: app - save new user to database');
   if(req && req.body) {
     dbService.saveUser(req.body, res);
   }
@@ -75,7 +76,6 @@ app.post('/saveUserData', function(req, res){
 
 // save route data to database
 app.post('/saveRouteData', function(req, res){
-  console.log('info: app - save new route to database');
   if(req && req.body) {
     dbService.saveRoute(req.body, res);
   }

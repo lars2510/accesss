@@ -8,8 +8,8 @@ var connection;
 var db;
 
 // Database credentials
-var dbUrl = 'https://accesss.iriscouch.com',
-    dbPort = '443',
+var //dbUrl = 'https://accesss.iriscouch.com',
+    //dbPort = '443',
     dbUrl = 'http://127.0.0.1',
     dbPort = '5984'
 		dbUsername = 'lars',
@@ -46,6 +46,13 @@ module.exports = {
   getUserById: function(userId, res) {
     console.log('info: databaseService - trying to get user by id');
     db.view('user/byUserId', { key: userId }, function (err, doc) {
+      res.send(doc);
+    });
+  },
+
+  getAvailableRoutes: function(routeType, res) {
+    console.log('info: databaseService - trying to get route by type');
+    db.view('route/availableRoutes', { key: routeType }, function (err, doc) {
       res.send(doc);
     });
   },
@@ -88,6 +95,17 @@ module.exports = {
           map: function (doc) { 
             if (doc.resource === 'user' && doc.userId) {
               emit(doc.userId, doc);
+            }
+          }
+        }
+      }
+    });
+    db.save('_design/route', {
+      views: {
+        availableRoutes: {
+          map: function (doc) { 
+            if (doc.resource === 'DRIVING' || doc.resource === 'CARPOOLING') {
+              emit(doc.resource, doc);
             }
           }
         }

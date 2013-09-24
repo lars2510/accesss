@@ -5,15 +5,28 @@ var dataService = {
   },
 
   storeRouteData: function(routeData) {
+    var requestUrl = '/saveRouteData';
     $.ajax({
-      type: "POST",
-      url: "/saveRouteData",
+      type: 'POST',
+      url: requestUrl,
       data: routeData,
       dataType: 'json'
     }).done(function() {
-      console.log('info: dataService - route data successful saved')
+      console.log('info: dataService - route type: ' + routeData.resource + ' successful saved')
     }).fail(function(){
-      console.log('error: dataService - cant save user information');
+      console.log('error: dataService - cant save ' + routeData.resource + ' information');
+    });
+  },
+
+  getRouteData: function(routeType, cb) {
+    var requestUrl = '/getRouteData/' + routeType;
+    $.ajax({
+      type: 'GET',
+      url: requestUrl
+    }).done(function(routeData) {
+      cb(routeData);
+    }).fail(function(){
+      console.log('error: dataService - cant get ' + routeData.resource + ' information');
     });
   },
 
@@ -60,8 +73,8 @@ var dataService = {
     console.log('info: dataService - storing user data');
     var self = this;
     $.ajax({
-      type: "POST",
-      url: "/saveUserData",
+      type: 'POST',
+      url: '/saveUserData',
       data: userData,
       dataType: 'json'
     }).done(function() {
