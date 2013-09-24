@@ -64,7 +64,7 @@ var MainController = function() {
     userData = data;
     var a = this.userData;
     $('#mainTitle').html(userData.name);
-    routeHandler.setUserId(userData.userId);
+    routeHandler.setUserData(userData);
   };
 
   this.setUserImage = function(img) {

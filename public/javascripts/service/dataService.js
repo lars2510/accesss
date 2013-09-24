@@ -1,7 +1,7 @@
 var dataService = {
 
   initUserData: function(userId) {
-    this._getUserData(userId);
+    this.getUserData(userId);
   },
 
   storeRouteData: function(routeData) {
@@ -34,18 +34,22 @@ var dataService = {
   * Get fb user data from database or facebook
   * @param {int} userId the user id
   */
-  _getUserData: function(userId) {
+  getUserData: function(userId, cb) {
     console.log('info: dataService - getting user data');
     var self = this;
     $.ajax({
       type: 'GET',
       url: '/getUserData/' + userId
     }).done(function(userData) {
+      // user is already in database
       if (userData.length > 0) {
-        // user is already in database
-        self._initWebsiteData(userData[0].value);
+        if (cb) {
+          cb(userData[0].value);  
+        } else {
+          self._initWebsiteData(userData[0].value);
+        }
+      // new user  
       } else {
-        // new user
         self._getUserDataFromFb();
       }
     }).fail(function(e){

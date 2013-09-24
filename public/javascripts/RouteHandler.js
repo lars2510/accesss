@@ -1,9 +1,11 @@
 var RouteHandler = function(map, directionsService, directionsDisplay) {
   
   var trafficLayer = new google.maps.TrafficLayer();
-  var matchedRoutes = [];
+  var matchingRoutes = [];
   var curRouteData;
-  var userId;
+  var userData;
+  var databaseRouteCnt;
+  var curRouteCnt;
   var maxDeviation = 20; // maximum deviation for carpooling
 
   /**
@@ -21,8 +23,8 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     _processRoute(routePoints, routeType);
   };
 
-  this.setUserId = function(id) {
-    userId = id;
+  this.setUserData = function(data) {
+    userData = data;
   };
 
   var _findMatchingRoutes = function(curRouteType) {
@@ -32,13 +34,16 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
   };
 
   var _filterNearbyRoutes = function(availableRoutes) {
-      matchedRoutes = [];
+      matchingRoutes = [];
+      databaseRouteCnt = availableRoutes.length;
+      curRouteCnt = 0;
+
       _.each(availableRoutes, function(route) {
-        _calcRouteWithWaypts(route.value, _checkDistance);
+        _calcRouteWithWaypts(route.value, _evaluateDistance);
       });
   };
 
-  var _checkDistance = function(poolingRoute, originRoute) {
+  var _evaluateDistance = function(poolingRoute, originRoute) {
     // get total route data including waypoints to pick up or drop off someone
     var routeTotals = _computeSubrouteTotal(poolingRoute);
 
@@ -55,8 +60,24 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     };
     if (poolingDetail.percentDist < maxDeviation) {
       poolingRoute.poolingDetail = poolingDetail;
-      matchedRoutes.push(poolingRoute);
+      matchingRoutes.push(poolingRoute);
     }
+    curRouteCnt += 1;
+    // every route from database has been evaluated
+    if (curRouteCnt === databaseRouteCnt) {
+      curRouteCnt = 0;
+      databaseRouteCnt = matchingRoutes.length;
+      _filterSocialRoutes(matchingRoutes);     
+    }
+  };
+
+  var _filterSocialRoutes = function(matchingRoutes) {
+    dataService.getUserData(matchingRoutes[0].userId, new SocialHandler(_evaluateSocialConnection, 0);)
+  };
+
+  var _evaluateSocialConnection = function(routeUserData, pos) {
+    // user data for matching route at pos
+    matchingRoutes[pos];
     debugger;
   };
 
@@ -114,6 +135,7 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     };
     directionsService.route(request, function(res, status) {
       if (status == google.maps.DirectionsStatus.OK) {
+        res.userId = route.userId;
         cb(res, route);
       }
     });
@@ -157,11 +179,11 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     var time = routeRes.routes[0].legs[0].duration.value;
     var distance = routeRes.routes[0].legs[0].distance.value;
 
-    if (userId && routePoints.start != '' && routePoints.end != '') {
+    if (userData.userId && routePoints.start != '' && routePoints.end != '') {
       curRouteData = {
         start: routePoints.start,
         end: routePoints.end,
-        userId: userId,
+        userId: userData.userId,
         resource: selectedMode,
         time: time,
         distance: distance
