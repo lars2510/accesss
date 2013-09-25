@@ -21,13 +21,15 @@ window.fbAsyncInit = function() {
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-
-$('#fblogin').live('click', function(e) {
-  FB.login(function(response) {
-    if (response.authResponse) {
-      console.log('info: fb - successfully logged in');
-    } else {
-      console.log('error: fb - user cancelled login or did not fully authorize');
-    }
-  }, {scope: 'email,user_likes'});
+// on document ready register facebook login listener, extra permissions: email + likes
+$(function() {
+  $('#fblogin').on('click', function(e) {
+    FB.login(function(response) {
+      if (response.authResponse) {
+        console.log('info: fb - successfully logged in');
+      } else {
+        console.log('error: fb - user cancelled login or did not fully authorize');
+      }
+    }, {scope: 'email,user_likes'});
+  });
 });

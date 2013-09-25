@@ -4,8 +4,10 @@ var accesss = (function(mainController){
 
   return {
     initMainPage: function(userData) {
+      $('#mainPage').on('pageshow',function(){
+        mainController.resizeMap();
+      });
       $.mobile.changePage('#mainPage', {transition: 'slide'});
-      mainController.resizeMap();
       mainController.setUserData(userData);
     },
     mainController: mainController

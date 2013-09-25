@@ -2,10 +2,10 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
   
   var trafficLayer = new google.maps.TrafficLayer();
   var matchingRoutes = [];
+  var matchingRoutesCnt = 0;
+  var curRouteCnt = 0;
   var curRouteData;
   var userData;
-  var databaseRouteCnt;
-  var curRouteCnt;
   var maxDeviation = 20; // maximum deviation for carpooling
 
   /**
@@ -35,9 +35,8 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
 
   var _filterNearbyRoutes = function(availableRoutes) {
       matchingRoutes = [];
-      databaseRouteCnt = availableRoutes.length;
+      matchingRoutesCnt = availableRoutes.length;
       curRouteCnt = 0;
-
       _.each(availableRoutes, function(route) {
         _calcRouteWithWaypts(route.value, _evaluateDistance);
       });
@@ -64,35 +63,111 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     }
     curRouteCnt += 1;
     // every route from database has been evaluated
-    if (curRouteCnt === databaseRouteCnt) {
+    if (curRouteCnt === matchingRoutesCnt) {
       curRouteCnt = 0;
-      databaseRouteCnt = matchingRoutes.length;
+      matchingRoutesCnt = matchingRoutes.length;
       _filterSocialRoutes(matchingRoutes);     
     }
   };
 
   var _filterSocialRoutes = function(matchingRoutes) {
-    dataService.getUserData(matchingRoutes[0].userId, new SocialHandler(_evaluateSocialConnection, 0);)
+    _.each(matchingRoutes, function(route, pos) {
+      // get social user data
+      // due to asynchronous database request, the callback function params where wrapped in a closure
+      dataService.getUserData(route.userId, _.bind(_evaluateSocialConnection, this, pos));
+    });
   };
 
-  var _evaluateSocialConnection = function(routeUserData, pos) {
-    // user data for matching route at pos
-    matchingRoutes[pos];
-    debugger;
+  var _evaluateSocialConnection = function(pos, routeUserData) {
+    if (userData.userId !== routeUserData.userId) {
+      var relationship = {};
+
+      // direct friend
+      relationship.friend = _.filter(routeUserData.friends.data, function(friend) {
+        return userData.userId === friend.userId;
+      });
+
+      // friends in common
+      var commonFriends = [];
+      _.each(routeUserData.friends.data, function(routeFriend) {
+        _.each(userData.friends.data, function(myFriend) {
+          if (myFriend.id === routeFriend.id) {
+            commonFriends.push(routeFriend.name);
+          };
+        });
+      });
+      relationship.commonFriends = commonFriends;
+      matchingRoutes[pos].relationship = relationship;
+    } else {
+      matchingRoutes.splice(pos, 1);
+    }
+    curRouteCnt += 1;
+    // every route from database socialy evaluated
+    if (curRouteCnt === matchingRoutesCnt) {
+      curRouteCnt = 0;
+      matchingRoutesCnt = 0;
+      _evaluateBestRoute(matchingRoutes);     
+    }
   };
+
+  var _evaluateBestRoute = function(matchingRoutes) {
+    var tmpRoute;
+    if (matchingRoutes.length > 0) {
+      if (matchingRoutes.length > 1) {
+        // direct friend
+        tmpRoute = _.filter(matchingRoutes, function(route) {
+          return route.relationship.friend.length > 0;
+        });
+        if (tmpRoute.length > 0) {
+          _announceBestRoute(tmpRoute[0]);
+        } else {
+          // friend in common
+          tmpRoute = _.filter(matchingRoutes, function(route) {
+            return route.relationship.commonFriends.length > 0;
+          });
+          if (tmpRoute.length === 1) {
+            _announceBestRoute(tmpRoute[0]);
+          } else {
+            if (tmpRoute.length > 1) {
+              // if more that 1 route have friends in common, calc min detour
+              matchingRoutes = tmpRoute;
+            }
+            // if no social connection is available or more that 1 social route is available, calc detour factor
+            var minDist = matchingRoutes[0].poolingDetail.percentDist;
+            _.each(matchingRoutes, function(route) {
+              if (route.poolingDetail.percentDist <= minDist) {
+                minDist = route.poolingDetail.percentDist;
+                tmpRoute = route;
+              }
+            });
+            _announceBestRoute(tmpRoute);
+          }
+        }
+      } else {
+        _announceBestRoute(tmpRoute);
+      }
+    } else {
+      console.log('leider keine passende route gefunden');
+    }
+  };
+
+  var _announceBestRoute = function(route) {
+    $('#poolingContent p').html(route.relationship.commonFriends[0]);
+    debugger;
+  }
 
   var _computeSubrouteTotal = function(route) {
-      var totalDist = 0;
-      var totalTime = 0;
-      var myroute = route.routes[0];
-      _.each(myroute.legs, function(subroute) {
-        totalDist += subroute.distance.value;
-        totalTime += subroute.duration.value;      
-      });
-      return {
-        distance: totalDist,
-        time: totalTime
-      };
+    var totalDist = 0;
+    var totalTime = 0;
+    var myroute = route.routes[0];
+    _.each(myroute.legs, function(subroute) {
+      totalDist += subroute.distance.value;
+      totalTime += subroute.duration.value;      
+    });
+    return {
+      distance: totalDist,
+      time: totalTime
+    };
   };
 
   /**

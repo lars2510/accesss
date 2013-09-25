@@ -58,10 +58,13 @@ module.exports = {
   },
 
   saveUser: function (userObj, res) {
+    console.log(userObj);
     db.save(userObj.email, {
       name: userObj.name,
-      //likes: userObj.user_likes,
       userId: userObj.id,
+      picture: userObj.picture.data.url,
+      likes: userObj.likes,
+      friends: userObj.friends,
       resource: 'user'
     }, function (err, dbres) {
       if (err) {

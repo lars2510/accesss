@@ -59,15 +59,18 @@ var dataService = {
 
   _getUserDataFromFb: function() {
     console.log('info: dataService - new user, getting data from facebook')
-    this._getFacebookUserData('?fields=id,name,email,friends,user_likes', this._storeUserData);
+    this._getFacebookUserData('?fields=id,name,email,link,cover,picture,friends,likes', this._storeUserData);
   },
 
   _getFacebookUserData: function(resource, cb) {
     var self = this;
+    // use facebook api to get accesss user details
     FB.api('/me' + resource, function(response) {
       if(response.error) {
         console.log(response.error.message);
       } else {
+        // callback function is invoked with response parameter (self envoking function)
+        // explicit self context must be set, else context would be faceook api
         (_.bind(cb, self, response))();
       }  
     });

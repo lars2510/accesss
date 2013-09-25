@@ -96,8 +96,6 @@ var MainController = function() {
   };
 
   var _displayCurrentLocation = function(pos) {
-    console.log(pos.coords.latitude);
-    console.log(pos.coords.longitude);
     myLatLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
     var marker = new google.maps.Marker({
       position: myLatLng,

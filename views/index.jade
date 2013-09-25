@@ -6,13 +6,12 @@ block content
         h1 mobility accesss
     div(data-role='content')
       p
-        a#fblogin(data-role='button' data-theme='b' data-transition='slide') facebook login
-        a(href='#mainPage' data-role='button' data-theme='b' data-transition='slide') private login
-
+        a#fblogin(data-role='button' data-transition='slide') facebook login
+        a(href='#mainPage' data-role='button' data-transition='slide') private login
   #mainPage(data-role='page')
     div(data-role='header' data-theme='b')
       a(href='#loginPage' data-role='button' data-icon="arrow-l" data-iconpos="left" data-inline="true") Zurück
-      h1#mainTitle Bar
+      h1#mainTitle mobility accesss
       a#js_direction(href='#directionPage' data-role='button' data-icon="arrow-r" data-iconpos="right" data-inline="true" data-transition='slide' class='ui-disabled') Streckeninfo
     div#mainContent(data-role='content')
       #control
@@ -37,6 +36,15 @@ block content
         img#userImage
     div#detailFooter(data-role='footer' data-theme='b')
       h4#js_carinfo
+        a(href='#poolingPopup' data-rel='popup') Open dialog
+    #poolingPopup(data-role='popup' data-overlay-theme="a" data-position-to="window")
+      div(data-role='header' data-theme='b')
+        h1 mobility accesss
+      #poolingContent(data-role='content')
+        h3 freund gefunden
+        p some text
+        a(href='#' data-role='button' data-rel='back' data-theme='c' data-inline='true') Cancel
+        a(href='#' data-role='button' data-rel='back' data-theme='b' data-inline='true') OK
   #directionPage(data-role='page')
     div(data-role='header' data-theme='b')
       a(href='#mainPage' data-role='button' data-icon="arrow-l" data-iconpos="left" data-inline="true" data-transition='slide') Zurück
