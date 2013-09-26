@@ -79,7 +79,7 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
       marker.setMap(null);
     });
     markerList = [];
-  }
+  };
 
   var _attachDetailLayer = function(marker, text) {
     google.maps.event.addListener(marker, 'click', function() {

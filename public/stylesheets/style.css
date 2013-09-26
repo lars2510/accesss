@@ -28,17 +28,7 @@ a {
   width: 100%;
 }
 
-#poolingPopup .ui-header {
-  position: relative;
-  height: auto;
-}
-
-#poolingPopup h1 {
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-#poolingContent h3 {
+.poolingContent h3 {
   margin: 0 0 15px 0;
 }
 
@@ -120,7 +110,23 @@ a {
   display: inline-block;
 }
 
-#js_mode .ui-btn-text span{
+#poolingPopupRoute .dialogHeadline.ui-header,
+#poolingPopup .dialogHeadline.ui-header  {
+  height: 60px;
+  position: relative;
+}
+
+#mainPage .dialogHeadline img {
+  position: absolute;
+  left: 5px;
+  top: 5px;
+}
+
+#mainPage .dialogHeadline h1 {
+  margin: 20px 10px 5px 55px;
+}
+
+#js_mode .ui-btn-text span {
   font-size: 13px;
   line-height: 1.4;
   font-weight: 400;

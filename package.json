@@ -9,7 +9,8 @@
     "pg": "2.x",
     "express": "3.4.0",
     "jade": "*",
-    "cradle": "*"
+    "cradle": "*",
+    "socket.io": "*"
   },
   "engines": {
     "node": "0.10.x",

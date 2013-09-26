@@ -23,7 +23,7 @@ window.fbAsyncInit = function() {
 
 // on document ready register facebook login listener, extra permissions: email + likes
 $(function() {
-  $('#fblogin').on('click', function(e) {
+  $('#fblogin').on('click', function() {
     FB.login(function(response) {
       if (response.authResponse) {
         console.log('info: fb - successfully logged in');
@@ -31,5 +31,8 @@ $(function() {
         console.log('error: fb - user cancelled login or did not fully authorize');
       }
     }, {scope: 'email,user_likes'});
+  });
+  $('#privateLogin').on('click', function() {
+    accesss.initMainPage();
   });
 });

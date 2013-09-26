@@ -81,6 +81,11 @@ var MainController = function() {
       sharingType = modeArray[1];
     }
 
+    if (carSharingHandler) {
+      carSharingHandler.removeMarker();
+    }
+
+
     switch(sharingType) {
       case 'CARSHARING':
         // carsharing singleton, results will be cached. to disable caching create new instance on every request

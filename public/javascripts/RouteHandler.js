@@ -6,6 +6,7 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
   var curRouteCnt = 0;
   var curRouteData;
   var userData;
+  var con;
   var maxDeviation = 20; // maximum deviation for carpooling
 
   /**
@@ -25,6 +26,8 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
 
   this.setUserData = function(data) {
     userData = data;
+    // build socket connection to route user, an callback function if route is requested
+    con = new SocketConnection(userData.userId, _showRequestedRoute);
   };
 
   var _findMatchingRoutes = function(curRouteType) {
@@ -113,40 +116,37 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
 
   var _evaluateBestRoute = function(matchingRoutes) {
     var tmpRoute;
+   
     if (matchingRoutes.length > 0) {
-      if (matchingRoutes.length > 1) {
-        // direct friend
+      // direct friend
+      tmpRoute = _.filter(matchingRoutes, function(route) {
+        return route.relationship.friend.length > 0;
+      });
+      if (tmpRoute.length > 0) {
+        _announceBestRoute(tmpRoute[0]);
+      } else {
+        // friend in common
         tmpRoute = _.filter(matchingRoutes, function(route) {
-          return route.relationship.friend.length > 0;
+          return route.relationship.commonFriends.length > 0;
         });
-        if (tmpRoute.length > 0) {
+        if (tmpRoute.length === 1) {
           _announceBestRoute(tmpRoute[0]);
         } else {
-          // friend in common
-          tmpRoute = _.filter(matchingRoutes, function(route) {
-            return route.relationship.commonFriends.length > 0;
-          });
-          if (tmpRoute.length === 1) {
-            _announceBestRoute(tmpRoute[0]);
-          } else {
-            if (tmpRoute.length > 1) {
-              // if more that 1 route have friends in common, calc min detour
-              matchingRoutes = tmpRoute;
-            }
-            // if no social connection is available or more that 1 social route is available, calc detour factor
-            var minDist = matchingRoutes[0].poolingDetail.percentDist;
-            _.each(matchingRoutes, function(route) {
-              if (route.poolingDetail.percentDist <= minDist) {
-                minDist = route.poolingDetail.percentDist;
-                tmpRoute = route;
-              }
-            });
-            _announceBestRoute(tmpRoute);
+          if (tmpRoute.length > 1) {
+            // if more that 1 route have friends in common, calc min detour
+            matchingRoutes = tmpRoute;
           }
+          // if no social connection is available or more that 1 social route is available, calc detour factor
+          var minDist = matchingRoutes[0].poolingDetail.percentDist;
+          _.each(matchingRoutes, function(route) {
+            if (route.poolingDetail.percentDist <= minDist) {
+              minDist = route.poolingDetail.percentDist;
+              tmpRoute = route;
+            }
+          });
+          _announceBestRoute(tmpRoute);
         }
-      } else {
-        _announceBestRoute(tmpRoute);
-      }
+      }   
     } else {
       console.log('leider keine passende route gefunden');
     }
@@ -154,30 +154,60 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
 
   var _announceBestRoute = function(route) {
     var rel = route.relationship;
-    var user = rel.userData;
-    var $dialog = $('#poolingContent #dialogContent');
+    var user = rel.userData;    
+    var $dialog = $('#poolingPopup .dialogContent');
+    var $dialogHeadline = $('#poolingPopup .dialogHeadline h1');
+
     $dialog.html('');
+    $dialogHeadline.html('Heute muss Dein Glückstag sein!');
+    $dialogHeadline.append('<img src="' + user.picture + '" />');
 
-    if (rel.friend.length > 0) {
+    if (rel.friend && rel.friend.length > 0) {
       $dialog.append('<h3>Dein Freund ' + user.name + ' fährt diese Strecke :)</h3>');
-      $dialog.append('<img src="' + user.picture + '" />');
-
     } else {
       $dialog.append('<h3>' + user.name + ' fährt diese Strecke :)</h3>');
-      $dialog.append('<img src="' + user.picture + '" />');
-      if (rel.commonFriends.length > 0) {
+      if (rel.commonFriends && rel.commonFriends.length > 0) {
         $dialog.append('<p>Vielleicht kennt Ihr euch sogar!</p>');
         $dialog.append('<p><strong>' + rel.commonFriends[0] + '</strong> ist ein gemeinsamer Freund</p>');
       }
-      if (rel.commonFriends.length > 1) {
+      if (rel.commonFriends && rel.commonFriends.length > 1) {
         $dialog.append('<p>(Insgesamt ' + rel.commonFriends.length + ' gemeinsame Freunde)</p>');
       }
       $dialog.append('<p>Das Nutzerprofil findest du <a href="https://www.facebook.com/' + user.userId + '" target="_blank">hier</a></p>');
     }
+
     $("#js_confirm-pooling").on('click', function() {
-      
+      var info = {
+        userName: userData.name,
+        userId: userData.userId,
+        picture: userData.picture,
+        time: route.poolingDetail.extendedTime,
+        dist: route.poolingDetail.extendedDist,
+        start: route.routes[0].legs[0].start_address,
+        wp1: route.routes[0].legs[1].start_address,
+        wp2: route.routes[0].legs[2].start_address,
+        end: route.routes[0].legs[2].end_address
+      }
+      con.getRoute(user.userId, info);
     });
     $("#poolingPopup").popup('open');
+  };
+
+  var _showRequestedRoute = function(info) {
+    _showPoolingRoute(info);
+    _showRequestDialog(info);
+  }
+
+  var _showRequestDialog = function(info) {
+    $dialog = $("#poolingPopupRoute");
+    $dialogHeadline = $dialog.find('.dialogHeadline');
+    $dialogHeadline.find('h1').html('Du hast eine Mitfahrer Anfrage!');
+    $dialogHeadline.append('<img src="' + info.picture + '" />');
+    $dialogContent = $dialog.find('.dialogContent');
+    $dialogContent.html("<p>" + info.userName + " würde sich freuen von dir mitgenommen zu werden</p>");
+    $dialogContent.append("<p>Der Umweg würde nur " + info.time + " Minuten betragen</p>");
+    $dialogContent.append("<p>Deine neue Strecke wird Dir gleich auf der Karte angezeigt</p>");
+    $dialog.popup('open');  
   };
 
   var _computeSubrouteTotal = function(route) {
@@ -192,6 +222,31 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
       distance: totalDist,
       time: totalTime
     };
+  };
+
+  /**
+  * Carpooling route with data from user request
+  */
+  var _showPoolingRoute = function(info) {
+    var waypts = [{
+        location:info.wp1,
+        stopover:true
+      },{
+        location:info.wp2,
+        stopover:true
+      }];
+    var request = {
+        origin: info.start,
+        destination: info.end,
+        travelMode: 'DRIVING',
+        waypoints: waypts,
+        optimizeWaypoints: true
+    };
+    directionsService.route(request, function(res, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        _showRoute(res);
+      }
+    });
   };
 
   /**

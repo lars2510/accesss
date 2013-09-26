@@ -8,7 +8,9 @@ var accesss = (function(mainController){
         mainController.resizeMap();
       });
       $.mobile.changePage('#mainPage', {transition: 'slide'});
-      mainController.setUserData(userData);
+      if (userData) {
+        mainController.setUserData(userData);
+      }
     },
     mainController: mainController
   }
