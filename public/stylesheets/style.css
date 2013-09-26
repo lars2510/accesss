@@ -100,20 +100,34 @@ a {
   display: inline-block;
 }
 
-#control .nav-elem > div,
-#control .nav-elem > label  {
+#control .nav-elem > div {
   margin: 0 4px 0 0;
   display: inline-block; 
 }
 
+#control .nav-elem > label {
+  margin: 0 4px 0 5px;
+  display: inline-block; 
+}
+
 #control .geo {
-  width: 45px;
-  height: 45px;
+  width: 35px;
+  height: 35px;
   background: #fff url('/images/geo-icon.png') no-repeat 0 0;
   vertical-align: top;
-  margin: 0 5px 0 0;
+  margin: 2px 7px 0px 5px;
   cursor: pointer;
   display: inline-block;
+}
+
+#js_mode .ui-btn-text span{
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+#js_mode .ui-btn-inner {
+  padding-left: 5px;
 }
 
 .pac-container:after{ 

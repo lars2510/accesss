@@ -158,21 +158,27 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     var $dialog = $('#poolingContent #dialogContent');
     $dialog.html('');
 
-    if (rel.friend.length > 4) {
-      $dialog.append('<h3>Dein Freund ' + user.name + ' fährt die gleiche Strecke :)</h3>');
+    if (rel.friend.length > 0) {
+      $dialog.append('<h3>Dein Freund ' + user.name + ' fährt diese Strecke :)</h3>');
+      $dialog.append('<img src="' + user.picture + '" />');
+
     } else {
-      $dialog.append('<h3>' + user.name + ' fährt die gleiche Strecke :)</h3>');
+      $dialog.append('<h3>' + user.name + ' fährt diese Strecke :)</h3>');
+      $dialog.append('<img src="' + user.picture + '" />');
       if (rel.commonFriends.length > 0) {
         $dialog.append('<p>Vielleicht kennt Ihr euch sogar!</p>');
-        $dialog.append('<p>Ihr habt <strong>' + rel.commonFriends[0] + '</strong> als gemeinsamen Freund</p>');
+        $dialog.append('<p><strong>' + rel.commonFriends[0] + '</strong> ist ein gemeinsamer Freund</p>');
       }
       if (rel.commonFriends.length > 1) {
         $dialog.append('<p>(Insgesamt ' + rel.commonFriends.length + ' gemeinsame Freunde)</p>');
       }
-      $dialog.append('<p>Sein Profil findest du <a href="https://www.facebook.com/' + user.userId + '" target="_blank">hier</a></p>');
+      $dialog.append('<p>Das Nutzerprofil findest du <a href="https://www.facebook.com/' + user.userId + '" target="_blank">hier</a></p>');
     }
-    debugger;
-  }
+    $("#js_confirm-pooling").on('click', function() {
+      
+    });
+    $("#poolingPopup").popup('open');
+  };
 
   var _computeSubrouteTotal = function(route) {
     var totalDist = 0;
