@@ -81,10 +81,11 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
   var _evaluateSocialConnection = function(pos, routeUserData) {
     if (userData.userId !== routeUserData.userId) {
       var relationship = {};
+      relationship.userData = routeUserData;
 
       // direct friend
       relationship.friend = _.filter(routeUserData.friends.data, function(friend) {
-        return userData.userId === friend.userId;
+        return userData.userId === friend.id;
       });
 
       // friends in common
@@ -102,7 +103,7 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
       matchingRoutes.splice(pos, 1);
     }
     curRouteCnt += 1;
-    // every route from database socialy evaluated
+    // every route from database was socialy evaluated (asynchron)
     if (curRouteCnt === matchingRoutesCnt) {
       curRouteCnt = 0;
       matchingRoutesCnt = 0;
@@ -152,7 +153,24 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
   };
 
   var _announceBestRoute = function(route) {
-    $('#poolingContent p').html(route.relationship.commonFriends[0]);
+    var rel = route.relationship;
+    var user = rel.userData;
+    var $dialog = $('#poolingContent #dialogContent');
+    $dialog.html('');
+
+    if (rel.friend.length > 4) {
+      $dialog.append('<h3>Dein Freund ' + user.name + ' fährt die gleiche Strecke :)</h3>');
+    } else {
+      $dialog.append('<h3>' + user.name + ' fährt die gleiche Strecke :)</h3>');
+      if (rel.commonFriends.length > 0) {
+        $dialog.append('<p>Vielleicht kennt Ihr euch sogar!</p>');
+        $dialog.append('<p>Ihr habt <strong>' + rel.commonFriends[0] + '</strong> als gemeinsamen Freund</p>');
+      }
+      if (rel.commonFriends.length > 1) {
+        $dialog.append('<p>(Insgesamt ' + rel.commonFriends.length + ' gemeinsame Freunde)</p>');
+      }
+      $dialog.append('<p>Sein Profil findest du <a href="https://www.facebook.com/' + user.userId + '" target="_blank">hier</a></p>');
+    }
     debugger;
   }
 
