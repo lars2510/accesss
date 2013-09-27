@@ -1,12 +1,12 @@
 var CarSharingHandler = function(map, directionsService, directionsDisplay) {
 
-  var myPosition;
-  var myMarker;
-  var markerInfoPopup = new google.maps.InfoWindow();
-  var geocoder = new google.maps.Geocoder();
-  var markerList = [];
-  var carPos;
-  var self = this;
+  var myPosition,
+      myMarker,
+      markerInfoPopup = new google.maps.InfoWindow(),
+      geocoder = new google.maps.Geocoder(),
+      markerList = [],
+      carPos,
+      self = this;
   
   self.carData;
 
@@ -101,8 +101,8 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
     directionsService.route(request, function(response, status) {
       if (status == google.maps.DirectionsStatus.OK) {
         var m = response.routes[0].legs[0].distance.value + " Meter"; 
-        var sec = response.routes[0].legs[0].duration.value + " Sekunden";
-        $('#js_carinfo').html('Entfernung zum Fahrzeug ca. ' + m + ' Meter. Fußweg ' + parseInt(parseInt(sec)/60) + ' Min.');
+        var min = (response.routes[0].legs[0].duration.value / 60 + 0.5).toFixed(0) + " min";
+        $('#js_carinfo').html('Entfernung ' + m + ' Meter. Fußweg ' + min + '.');
         directionsDisplay.setDirections(response);
         $('#js_direction').removeClass('ui-disabled');
       }

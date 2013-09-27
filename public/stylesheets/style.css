@@ -142,11 +142,18 @@ a {
 
 .carbook {
   color: #fff;
-  background: #44f;
+  background: #009fe4;
   text-shadow: none;
   float: right;
   margin-top: 3px;
   cursor: pointer;
+  padding: 0 4px;
+  border-radius: 6px;
+  line-height: 17px;
+}
+
+.carbook:hover {
+  background: #007fc4; 
 }
 
 @media print {

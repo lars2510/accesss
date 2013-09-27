@@ -4,7 +4,6 @@ var MainController = function() {
       directionsService,
       map,
       routeHandler,
-      carSharingHandler,
       geocoder,
       userData,
       searchBoxes = [];
@@ -50,14 +49,7 @@ var MainController = function() {
   };
 
   this.startCarSharingRoute = function() {
-    var carPos = carSharingHandler.getCarPos();
-    if(carPos) {
-      routeHandler.calcRoute('DRIVING', carPos);
-      carSharingHandler.removeMarker();
-    } else {
-      console.log('error: MainController - CarSharing pos not available');
-    }
-    
+    routeHandler.calcCarSharingRoute();    
   };
 
   this.setUserData = function(data) {
@@ -67,37 +59,8 @@ var MainController = function() {
     routeHandler.setUserData(userData);
   };
 
-  this.setUserImage = function(img) {
-    $('#userImage').attr('src', img.data.url);
-  };
-
-  var _routeRequest = function(carPos) {
-    var selectedMode = $('#mode').val();
-    var modeArray = selectedMode.split('-');
-    var sharingType;
-
-    if (modeArray.length == 2) {
-      selectedMode = modeArray[0];
-      sharingType = modeArray[1];
-    }
-
-    if (carSharingHandler) {
-      carSharingHandler.removeMarker();
-    }
-
-
-    switch(sharingType) {
-      case 'CARSHARING':
-        // carsharing singleton, results will be cached. to disable caching create new instance on every request
-        carSharingHandler = carSharingHandler || new CarSharingHandler(map, directionsService, directionsDisplay);
-        carSharingHandler.init();
-        break;
-      case 'CARPOOLING':
-        routeHandler.matchRoute(_getRoutePoints(), 'CARPOOLING');
-        break;
-      default:
-        routeHandler.calcRoute(selectedMode);
-    }  
+  var _routeRequest = function() {
+    routeHandler.routeRequest();  
   };
 
   var _displayCurrentLocation = function(pos) {
@@ -107,7 +70,6 @@ var MainController = function() {
       map: map
     });
     map.setCenter(myLatLng);
-
     geocoder.geocode({'latLng': myLatLng}, function(results, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (results[0]) {
@@ -127,13 +89,6 @@ var MainController = function() {
       });
     } else {
       console.log("error: maps - geolocation not supported");
-    }
-  };
-
-  var _getRoutePoints = function() {
-    return {
-      start: $('#js_start input').val(),
-      end: $('#js_end input').val()
     }
   };
 

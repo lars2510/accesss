@@ -93,6 +93,5 @@ var dataService = {
 
   _initWebsiteData: function(userData) {
     accesss.initMainPage(userData);
-    //this._getFbData('/picture?redirect=false', accesss.setUserImage);
   }
 };

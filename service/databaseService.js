@@ -58,7 +58,6 @@ module.exports = {
   },
 
   saveUser: function (userObj, res) {
-    console.log(userObj);
     db.save(userObj.email, {
       name: userObj.name,
       userId: userObj.id,
