@@ -93,6 +93,12 @@ server.listen(app.get('port'), function(){
 * Socket Connection for user communication
 */
 var io = socket.listen(server);
+// assuming io is the Socket.IO server object
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 10); 
+});
+
 var users = [];
 io.sockets.on('connection', function (socket) {
 

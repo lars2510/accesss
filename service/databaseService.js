@@ -11,7 +11,7 @@ var db;
 var dbUrl = 'https://accesss.iriscouch.com';
 var dbPort = '443';
 // var dbUrl = 'http://127.0.0.1';
-// var dbPort = '5984'; 
+// var dbPort = '5984';
 var dbUsername = 'lars';
 var dbPassword = 'test1234';
 
