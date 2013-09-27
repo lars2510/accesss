@@ -8,12 +8,12 @@ var connection;
 var db;
 
 // Database credentials
-var //dbUrl = 'https://accesss.iriscouch.com',
-    //dbPort = '443',
-    dbUrl = 'http://127.0.0.1',
-    dbPort = '5984'
-		dbUsername = 'lars',
-		dbPassword = 'test1234';
+var dbUrl = 'https://accesss.iriscouch.com';
+var dbPort = '443';
+// var dbUrl = 'http://127.0.0.1';
+// var dbPort = '5984';
+var dbUsername = 'lars';
+var dbPassword = 'test1234';
 
 module.exports = {
   initConnection: function (dbName) {
