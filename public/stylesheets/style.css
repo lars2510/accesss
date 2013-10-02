@@ -192,6 +192,9 @@ a {
   #control .nav-elem-mode > label {
     display: none;
   }
+  #map-canvas .gm-style .gmnoprint .gm-style-mtc {
+    display: none;
+  }
 }
 Matched CSS Rules
 .nav-elem-mode .ui-btn-text span
