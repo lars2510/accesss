@@ -10,19 +10,19 @@ block content
         a#privateLogin(href='#mainPage' data-role='button' data-transition='slide') private login
   #mainPage(data-role='page')
     div(data-role='header' data-theme='b')
-      a(href='#loginPage' data-role='button' data-icon="arrow-l" data-iconpos="left" data-inline="true") Zurück
+      a(href='#loginPage' data-role='button' data-icon="arrow-l" data-iconpos="left" data-inline="true" data-direction='reverse') Zurück
       h1#mainTitle
       a#js_direction(href='#directionPage' data-role='button' data-icon="arrow-r" data-iconpos="right" data-inline="true" data-transition='slide' class='ui-disabled') Streckeninfo
     div#mainContent(data-role='content')
       #control
         #js_geolocation.geo
-        #js_start.nav-elem
+        #js_start.nav-elem.nav-elem-start
           label(for='text-basic') Start:
           input#text-basic(type='text', name='text-basic', value='')
         #js_end.nav-elem
           label(for='text-basic') Ziel:
           input#text-basic(type='text', name='text-basic', value='')
-        #js_mode.nav-elem
+        #js_mode.nav-elem.nav-elem-mode
           label.ui-input-text Ich 
           select#mode
             option(value='DRIVING-CARSHARING') nutze Car-Sharing
@@ -52,7 +52,7 @@ block content
         a#js_confirm-ridshare(href='#' data-role='button' data-rel='back' data-theme='b' data-inline='true') OK
   #directionPage(data-role='page')
     div(data-role='header' data-theme='b')
-      a(href='#mainPage' data-role='button' data-icon="arrow-l" data-iconpos="left" data-inline="true" data-transition='slide') Zurück
+      a(href='#mainPage' data-role='button' data-icon="arrow-l" data-iconpos="left" data-inline="true" data-transition='slide' data-direction='reverse') Zurück
       h1 Streckeninfo
     div(data-role='content')
       #directions-panel

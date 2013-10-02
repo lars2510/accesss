@@ -16,7 +16,7 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
       self.initCars(self.carData);
     } else {
       // get new data from car2go api for hamburg
-      car2goApi.getLocalData('hamburg', self.initCars);
+      car2goService.getLocalData('hamburg', self.initCars);
     };
   }
 

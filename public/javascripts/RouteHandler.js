@@ -9,7 +9,7 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
   this.setUserData = function(data) {
     userData = data;
     // build socket connection to route user, an callback function if route is requested
-    con = new SocketConnection(userData.userId, _showRequestedRoute);
+    con = new SocketHandler(userData.userId, _showRequestedRoute);
   };
 
   this.routeRequest = function() {

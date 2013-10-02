@@ -164,12 +164,12 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
       $dialog.append('<h3>' + user.name + ' fährt diese Strecke :)</h3>');
       if (rel.commonFriends && rel.commonFriends.length > 0) {
         $dialog.append('<p>Vielleicht kennt Ihr euch sogar!</p>');
-        $dialog.append('<p><strong>' + rel.commonFriends[0] + '</strong> ist ein gemeinsamer Freund</p>');
+        $dialog.append('<p><strong>' + rel.commonFriends[0] + '</strong> ist ein gemeinsamer Freund.</p>');
       }
       if (rel.commonFriends && rel.commonFriends.length > 1) {
         $dialog.append('<p>(Insgesamt ' + rel.commonFriends.length + ' gemeinsame Freunde)</p>');
       }
-      $dialog.append('<p>Das Nutzerprofil findest du <a href="https://www.facebook.com/' + user.userId + '" target="_blank">hier</a></p>');
+      $dialog.append('<p>Das Nutzerprofil findest du <a href="https://www.facebook.com/' + user.userId + '" target="_blank">hier</a>.</p>');
     }
 
     $("#js_confirm-pooling").on('click', function() {
@@ -195,9 +195,9 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     $dialogHeadline.find('h1').html('Du hast eine Mitfahrer Anfrage!');
     $dialogHeadline.append('<img src="' + info.picture + '" />');
     $dialogContent = $dialog.find('.dialogContent');
-    $dialogContent.html("<p>" + info.userName + " würde sich freuen von dir mitgenommen zu werden</p>");
-    $dialogContent.append("<p>Der Umweg würde nur " + info.time + " Minuten betragen</p>");
-    $dialogContent.append("<p>Deine neue Strecke wird Dir gleich auf der Karte angezeigt</p>");
+    $dialogContent.html("<p>" + info.userName + " würde sich freuen von Dir mitgenommen zu werden!</p>");
+    $dialogContent.append("<p>Der Umweg würde nur " + info.time + " Minuten betragen.</p>");
+    $dialogContent.append("<p>Deine neue Strecke wird Dir auf der Karte angezeigt!</p>");
     $dialog.popup('open');  
   };
 

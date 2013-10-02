@@ -8,12 +8,12 @@
  * Module dependencies
  */
 var express = require('express');
-var socket = require('socket.io');
 var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 var dbService = require('./service/databaseService');
+var socketHandler = require('./socketHandler');
 var app = express();
 
 /** 
@@ -88,31 +88,4 @@ var server = http.createServer(app);
 server.listen(app.get('port'), function(){
   console.log('info: express server stated. listening on port ' + app.get('port'));
 });
-
-/**
-* Socket Connection for user communication
-*/
-var io = socket.listen(server);
-// assuming io is the Socket.IO server object
-io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
-});
-
-var users = [];
-io.sockets.on('connection', function (socket) {
-
-  // when the client emits 'adduser', this listens and executes
-  socket.on('adduser', function(userId){
-    users[userId] = socket;
-    console.log('user added: ' + userId);
-  });
-  socket.on('getroute', function(routeUserId, info){
-    console.log('send to user: ' + routeUserId);
-    if (users[routeUserId]) {
-      users[routeUserId].emit('routerequest', info);  
-    } else {
-      console.log('error: user ' + routeUserId + ' not found')
-    }
-  });
-});
+socketHandler.init(server);

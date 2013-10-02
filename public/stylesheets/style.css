@@ -100,6 +100,10 @@ a {
   display: inline-block; 
 }
 
+#control .nav-elem-mode > label {
+  line-height: 11px;
+}
+
 #control .geo {
   width: 35px;
   height: 35px;
@@ -126,13 +130,13 @@ a {
   margin: 20px 10px 5px 55px;
 }
 
-#js_mode .ui-btn-text span {
+.nav-elem-mode .ui-btn-text span {
   font-size: 13px;
   line-height: 1.4;
   font-weight: 400;
 }
 
-#js_mode .ui-btn-inner {
+.nav-elem-mode .ui-btn-inner {
   padding-left: 5px;
 }
 
@@ -156,9 +160,20 @@ a {
   background: #007fc4; 
 }
 
-@media print {
-  html, body {
-    height: auto;
+@media screen and (max-width: 800px) {
+  #control {
+    width: 246px;
   }
-
+  #control .geo {
+    position: absolute;
+    right: 0;
+    bottom: 6px;
+  }
+  #control label {
+    width: 41px;
+    text-align: right;
+  }
+  #control .nav-elem-start {
+    margin-bottom: 5px;
+  }
 }

@@ -2,7 +2,7 @@
 * get live car-sharing data from car2go api
 * @author lars schuettemeyer
 */
-var car2goApi = {
+var car2goService = {
   /**
   * get live car-sharing data from car2go api
   * @param {string} city - get data from this city

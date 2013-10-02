@@ -9,7 +9,7 @@ var db;
 
 // Database credentials
 var dbUrl = 'https://accesss.iriscouch.com';
-var dbPort = '443';
+var dbPort = '6984';
 // var dbUrl = 'http://127.0.0.1';
 // var dbPort = '5984';
 var dbUsername = 'lars';
