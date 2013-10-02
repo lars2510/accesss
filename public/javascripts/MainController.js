@@ -54,7 +54,6 @@ var MainController = function() {
 
   this.setUserData = function(data) {
     userData = data;
-    var a = this.userData;
     $('#mainTitle').html("Willkommen " + userData.name);
     routeHandler.setUserData(userData);
   };

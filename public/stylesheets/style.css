@@ -162,18 +162,37 @@ a {
 
 @media screen and (max-width: 800px) {
   #control {
-    width: 246px;
+    width: 204px;
   }
   #control .geo {
     position: absolute;
-    right: 0;
-    bottom: 6px;
+    right: -2px;
+    top: 2px;
+    width: 30px;
+    height: 30px;
+    background-position: -2px -2px;
   }
   #control label {
-    width: 41px;
+    width: 28px;
     text-align: right;
+    font-size: 11px;
   }
   #control .nav-elem-start {
     margin-bottom: 5px;
   }
+  #control .nav-elem-mode {
+    margin-left: 32px;
+  }
+  #control .nav-elem > div input {
+    font-size: 11px;
+  }
+  #control .nav-elem-mode .ui-btn-text span {
+    font-size: 11px;
+  }
+  #control .nav-elem-mode > label {
+    display: none;
+  }
+}
+Matched CSS Rules
+.nav-elem-mode .ui-btn-text span
 }

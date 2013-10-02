@@ -85,6 +85,7 @@ var dataService = {
       data: userData,
       dataType: 'json'
     }).done(function() {
+      userData.userId = userData.id;
       self._initWebsiteData(userData);
     }).fail(function(){
       console.log('error: dataService - cant save user information');

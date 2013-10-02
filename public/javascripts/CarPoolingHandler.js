@@ -81,7 +81,7 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     if (userData.userId !== routeUserData.userId) {
       var relationship = {};
       relationship.userData = routeUserData;
-
+      debugger;
       // direct friend
       relationship.friend = _.filter(routeUserData.friends.data, function(friend) {
         return userData.userId === friend.id;
@@ -98,8 +98,6 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
       });
       relationship.commonFriends = commonFriends;
       matchingRoutes[pos].relationship = relationship;
-    } else {
-      matchingRoutes.splice(pos, 1);
     }
     curRouteCnt += 1;
     // every route from database was socialy evaluated (asynchron)
@@ -113,6 +111,11 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
   var _evaluateBestRoute = function(matchingRoutes) {
     var tmpRoute;
    
+    // remove invalid routes, even with no friendship, rel obj musst be available
+    matchingRoutes = _.filter(matchingRoutes, function(route) {
+      return route.relationship;
+    });
+
     if (matchingRoutes.length > 0) {
       // direct friend
       tmpRoute = _.filter(matchingRoutes, function(route) {
@@ -123,7 +126,7 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
       } else {
         // friend in common
         tmpRoute = _.filter(matchingRoutes, function(route) {
-          return route.relationship.commonFriends.length > 0;
+          return route.relationship && route.relationship.commonFriends.length > 0;
         });
         if (tmpRoute.length === 1) {
           _announceBestRoute(tmpRoute[0]);
@@ -155,18 +158,18 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     var $dialogHeadline = $('#poolingPopup .dialogHeadline h1');
 
     $dialog.html('');
-    $dialogHeadline.html('Heute muss Dein Glückstag sein!');
+    $dialogHeadline.html('Heute muss dein Glückstag sein!');
     $dialogHeadline.append('<img src="' + user.picture + '" />');
 
-    if (rel.friend && rel.friend.length > 0) {
+    if (rel && rel.friend && rel.friend.length > 0) {
       $dialog.append('<h3>Dein Freund ' + user.name + ' fährt diese Strecke :)</h3>');
     } else {
       $dialog.append('<h3>' + user.name + ' fährt diese Strecke :)</h3>');
-      if (rel.commonFriends && rel.commonFriends.length > 0) {
-        $dialog.append('<p>Vielleicht kennt Ihr euch sogar!</p>');
+      if (rel && rel.commonFriends && rel.commonFriends.length > 0) {
+        $dialog.append('<p>Vielleicht kennt ihr euch sogar!</p>');
         $dialog.append('<p><strong>' + rel.commonFriends[0] + '</strong> ist ein gemeinsamer Freund.</p>');
       }
-      if (rel.commonFriends && rel.commonFriends.length > 1) {
+      if (rel && rel.commonFriends && rel.commonFriends.length > 1) {
         $dialog.append('<p>(Insgesamt ' + rel.commonFriends.length + ' gemeinsame Freunde)</p>');
       }
       $dialog.append('<p>Das Nutzerprofil findest du <a href="https://www.facebook.com/' + user.userId + '" target="_blank">hier</a>.</p>');
@@ -195,9 +198,9 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     $dialogHeadline.find('h1').html('Du hast eine Mitfahrer Anfrage!');
     $dialogHeadline.append('<img src="' + info.picture + '" />');
     $dialogContent = $dialog.find('.dialogContent');
-    $dialogContent.html("<p>" + info.userName + " würde sich freuen von Dir mitgenommen zu werden!</p>");
+    $dialogContent.html("<p>" + info.userName + " würde sich freuen von dir mitgenommen zu werden!</p>");
     $dialogContent.append("<p>Der Umweg würde nur " + info.time + " Minuten betragen.</p>");
-    $dialogContent.append("<p>Deine neue Strecke wird Dir auf der Karte angezeigt!</p>");
+    $dialogContent.append("<p>Deine neue Strecke wird dir auf der Karte angezeigt!</p>");
     $dialog.popup('open');  
   };
 
