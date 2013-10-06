@@ -8,12 +8,12 @@ var connection;
 var db;
 
 // Database credentials
-// var dbUrl = 'https://accesss.iriscouch.com';
-// var dbPort = '6984';
+var dbUrl = 'https://accesss.iriscouch.com';
+var dbPort = '6984';
 // var dbUrl = 'https://accesss.cloudant.com/';
 // var dbPort = '5984';
-var dbUrl = 'http://127.0.0.1';
-var dbPort = '5984';
+// var dbUrl = 'http://127.0.0.1';
+// var dbPort = '5984';
 var dbUsername = 'lars';
 var dbPassword = 'test1234';
 

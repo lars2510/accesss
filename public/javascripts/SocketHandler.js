@@ -1,6 +1,6 @@
 var SocketHandler = function(userId, cb) {
-  var socket = io.connect('http://192.168.1.2');
-  // var socket = io.connect('https://accesss.herokuapp.com');
+  // var socket = io.connect('http://192.168.1.2');
+  var socket = io.connect('https://accesss.herokuapp.com');
   
   // on connection to server, ask for user's name with an anonymous callback
   socket.on('connect', function(){

@@ -102,7 +102,7 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
       if (status == google.maps.DirectionsStatus.OK) {
         var m = response.routes[0].legs[0].distance.value + " Meter"; 
         var min = (response.routes[0].legs[0].duration.value / 60 + 0.5).toFixed(0) + " min";
-        $('#js_carinfo').html('Entfernung ' + m + ' Meter. Fußweg ' + min + '.');
+        $('#js_carinfo').html('Entfernung ' + m + '. Fußweg ' + min + '.');
         directionsDisplay.setDirections(response);
         $('#js_direction').removeClass('ui-disabled');
       }
