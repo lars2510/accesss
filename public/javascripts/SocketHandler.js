@@ -7,8 +7,8 @@
 */
 var SocketHandler = function(userId, cb) {
   // for local testing purpose insert local server ip
-  var socket = io.connect('http://192.168.1.7');
-  // var socket = io.connect('https://accesss.herokuapp.com');
+  // var socket = io.connect('http://192.168.1.7');
+  var socket = io.connect('https://accesss.herokuapp.com');
   
   // if new client connects call the server-side function 'adduser' and send 'userID' as parameter
   socket.on('connect', function(){
