@@ -66,7 +66,7 @@ var dataService = {
         }
       } else {
         // new user, get id, name, email, link, cover, picture, friends, likes from fb
-        self._getUserDataFromFb('?fields=id,name,email,link,cover,picture,friends,likes', self._storeUserData);
+        self._getFacebookUserData('?fields=id,name,email,link,cover,picture,friends,likes', self._storeUserData);
       }
     }).fail(function(e){
       console.warn('error: dataService - can not get fb user data');
