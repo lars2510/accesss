@@ -1,18 +1,26 @@
+/**
+* Facebook SDK implementation
+* @author lars schuettemeyer
+*/
+
+/**
+* Facebook SDK implementation
+* Use of recommended Facebook code from https://developers.facebook.com/docs/reference/api/
+*/
 window.fbAsyncInit = function() {
   FB.init({
-    appId      : '173666146154788',                    // App ID from the app dashboard
-    status     : true,                                 // Check Facebook Login status
-    cookie     : true,                                 // enable cookies to allow the server to access the session
-    xfbml      : true                                  // Look for social plugins on the page
+    appId      : '173666146154788',
+    status     : true,
+    cookie     : true,
+    xfbml      : true
   });
   FB.Event.subscribe('auth.authResponseChange', function(response) {
     if (response.authResponse) {
-      console.log('info: fb - user is logged in');
+      console.log('info: fbService - user is logged in');
       dataService.initUserData(response.authResponse.userID);
     }
   });
 };
-
 (function(d, s, id){
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) {return;}
@@ -21,14 +29,15 @@ window.fbAsyncInit = function() {
   fjs.parentNode.insertBefore(js, fjs);
 }(document, 'script', 'facebook-jssdk'));
 
-// on document ready register facebook login listener, extra permissions: email + likes
+/**
+* Facebook Login implementation,
+* email and user likes are requested on top
+*/
 $(function() {
   $('#fblogin').on('click', function() {
     FB.login(function(response) {
-      if (response.authResponse) {
-        console.log('info: fb - successfully logged in');
-      } else {
-        console.log('error: fb - user cancelled login or did not fully authorize');
+      if (!response.authResponse) {
+        console.warn('error: fbService - user cancelled login or did not fully authorize');
       }
     }, {scope: 'email,user_likes'});
   });

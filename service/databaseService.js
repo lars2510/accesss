@@ -1,23 +1,27 @@
 /**
-* database connection and helper functions
+* Module to init database connection and process requests
 *
-* Author: Lars Schüttemeyer
-**/
+* @author lars schuettemeyer
+*/
 var cradle = require('cradle');
 var connection;
 var db;
 
-// Database credentials
-var dbUrl = 'https://accesss.iriscouch.com';
-var dbPort = '6984';
-// var dbUrl = 'https://accesss.cloudant.com/';
-// var dbPort = '5984';
-// var dbUrl = 'http://127.0.0.1';
-// var dbPort = '5984';
+// Database credentials, insert url, port, user and passwort
+// var dbUrl = 'https://accesss.iriscouch.com';
+// var dbPort = '6984';
+var dbUrl = 'http://127.0.0.1';
+var dbPort = '5984';
 var dbUsername = 'lars';
 var dbPassword = 'test1234';
 
+
 module.exports = {
+
+  /**
+  * init connection to database
+  * @param {sting} dbName - the database name
+  */
   initConnection: function (dbName) {
     var self = this;
     connection = connection || new(cradle.Connection)(dbUrl, dbPort, {
@@ -31,13 +35,19 @@ module.exports = {
       } else if (exists) {
         console.log('info: databaseService - logged in to database: ' + dbName);
       } else {
-        console.log('info: databaseService - database ' + dbName + ' does not exists and will be created');
+        console.warn('info: databaseService - database ' + dbName + ' does not exists and will be created');
         db.create();
         self.initViews();
       }
     });
   },
 
+
+  /**
+  * get user info form database
+  * @param {string} userName - the user name
+  * @param {object} res - result output stream
+  */
   getUser: function (userName, res) {
     console.log('info: databaseService - trying to get user data');
   	db.get(userName, function (err, doc) {
@@ -45,6 +55,11 @@ module.exports = {
 	  });
   },
 
+  /**
+  * get user by id
+  * @param {integer} userId - the user id
+  * @param {object} res - result output stream
+  */
   getUserById: function(userId, res) {
     console.log('info: databaseService - trying to get user by id');
     db.view('user/byUserId', { key: userId }, function (err, doc) {
@@ -52,6 +67,11 @@ module.exports = {
     });
   },
 
+  /**
+  * get all available routes for a given type
+  * @param {string} routeType - the route type
+  * @param {object} res - result output stream
+  */
   getAvailableRoutes: function(routeType, res) {
     console.log('info: databaseService - trying to get route by type');
     db.view('route/availableRoutes', { key: routeType }, function (err, doc) {
@@ -59,6 +79,11 @@ module.exports = {
     });
   },
 
+  /**
+  * save user data to database
+  * @param {object} userObj - the user object
+  * @param {object} res - result output stream
+  */
   saveUser: function (userObj, res) {
     db.save(userObj.email, {
       name: userObj.name,
@@ -69,7 +94,7 @@ module.exports = {
       resource: 'user'
     }, function (err, dbres) {
       if (err) {
-        console.log('error: databaseService - could not save record');
+        console.warn('error: databaseService - could not save record');
         console.log(err);
       } else {
         console.log('info: databaseService - new user successfull saved');
@@ -78,10 +103,15 @@ module.exports = {
     });
   },
 
+  /**
+  * save route data to database
+  * @param {object} routeObj - the route data
+  * @param {object} res - result output stream
+  */
   saveRoute: function (routeObj, res) {
     db.save(routeObj, function (err, dbres) {
       if (err) {
-        console.log('error: databaseService - could not save route');
+        console.warn('error: databaseService - could not save route');
         console.log(err);
       } else {
         console.log('info: databaseService - new route successfull saved');
@@ -90,7 +120,10 @@ module.exports = {
     });
   },
 
-  /** init views function is only need if new couchdb must be configured **/
+
+  /**
+  * init views function will be triggered if new couchdb must be configured
+  */
   initViews: function () {
     // create user view to select user by byUserId
     db.save('_design/user', {
@@ -104,6 +137,9 @@ module.exports = {
         }
       }
     });
+    console.log('info: databaseService - new view (byUserId) has been created');
+
+    // create route view to select route by route type
     db.save('_design/route', {
       views: {
         availableRoutes: {
@@ -115,21 +151,6 @@ module.exports = {
         }
       }
     });
-    console.log('info: databaseService - new view (byUserId) has been created');
+    console.log('info: databaseService - new view (availableRoutes) has been created');
   }
 };
-
-
-
-// db.get(['luke', 'vader'], function (err, doc) { ... });
-
-/*db.merge('luke', {jedi: true}, function (err, res) {
-      // Luke is now a jedi,
-      // but remains on the dark side of the force.
-  });*/
-
-/* db.save('luke', '1-94B6F82', {
-      force: 'dark', name: 'Luke'
-  }, function (err, res) {
-      // Handle response
-  }); */

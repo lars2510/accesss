@@ -1,4 +1,7 @@
-
+/**
+* basic styling
+* @author lars schuettemeyer
+*/
 html, body {
   height: 100%;
   margin: 0;
@@ -88,6 +91,7 @@ a {
 
 #control .nav-elem {
   display: inline-block;
+  vertical-align: middle;
 }
 
 #control .nav-elem > div {
@@ -98,10 +102,12 @@ a {
 #control .nav-elem > label {
   margin: 0 4px 0 5px;
   display: inline-block; 
+  vertical-align: top;
+  margin-top: 8px;
 }
 
 #control .nav-elem-mode > label {
-  line-height: 11px;
+  margin-top: 11px;
 }
 
 #control .geo {

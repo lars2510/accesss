@@ -1,3 +1,8 @@
+/**
+* Car-Sharing Class
+* shows car-sharing vehicles on the map, show additional information and calculates the route
+* @author lars schuettemeyer
+*/
 var CarSharingHandler = function(map, directionsService, directionsDisplay) {
 
   var myPosition,
@@ -10,6 +15,9 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
   
   self.carData;
 
+  /**
+  * init the car sharing handler
+  */
   this.init = function() {
     if(self.carData) {
       // use cached data
@@ -20,10 +28,17 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
     };
   }
 
+  /**
+  * return current car position
+  */
   this.getCarPos = function() {
     return carPos;
   };
 
+  /**
+  * calculate carpooling route with waypoints
+  * @param {object} carData - the car data
+  */
   this.initCars = function(carData) {
     var image = 'images/car-marker.png';
     var address = $('#js_start input').val();
@@ -47,7 +62,7 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
             });
           }
         } else {
-          console.warn("error: maps - geocoder failed due to: " + status);
+          console.warn("error: CarSharingHandler - geocoder failed due to: " + status);
         }
       });
     }
@@ -74,6 +89,9 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
     });
   };
 
+  /**
+  * remove marker from map
+  */
   this.removeMarker = function() {
     _.each(markerList, function(marker) {
       marker.setMap(null);
@@ -81,6 +99,11 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
     markerList = [];
   };
 
+  /**
+  * calculate carpooling route with waypoints
+  * @param {object} marker
+  * @param {string} text
+  */
   var _attachDetailLayer = function(marker, text) {
     google.maps.event.addListener(marker, 'click', function() {
       myMarker.setMap(null);
@@ -91,6 +114,10 @@ var CarSharingHandler = function(map, directionsService, directionsDisplay) {
     });
   };
 
+  /**
+  * get the walking distance to the carsharing vehicle
+  * @param {object} selectedCarPos
+  */
   var _getWalkingDistance = function(selectedCarPos) {
     var request = {
       origin: myPosition, 

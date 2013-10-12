@@ -1,8 +1,8 @@
 /** 
-* nodejs server configuration
+* Main Module for nodejs server configuration
 *
-* author: lars schuettemeyer 
-**/
+* @author lars schuettemeyer
+*/
 
 /**
  * Module dependencies
@@ -51,30 +51,36 @@ if ('development' == app.get('env')) {
 /**
 * configure routing
 **/
-// index page
 app.get('/', routes.index);
 
 /**
 * route: get facebook user data from database if user already exists
-* @return {object} userObj the user object
+* @param {integer} id - the user id
 */
 app.get('/getUserData/:id', function(req, res){
   dbService.getUserById(req.params.id, res);
 });
 
+/**
+* route: get route data for a given route type
+* @param {string} routeType - the route type
+*/
 app.get('/getRouteData/:routeType', function(req, res){
   dbService.getAvailableRoutes(req.params.routeType, res);
 });
 
-
-// save facebook user data to database
+/**
+* save facebook user data to database
+*/
 app.post('/saveUserData', function(req, res){
   if(req && req.body) {
     dbService.saveUser(req.body, res);
   }
 });
 
-// save route data to database
+/**
+* save route data to database
+*/
 app.post('/saveRouteData', function(req, res){
   if(req && req.body) {
     dbService.saveRoute(req.body, res);
@@ -88,4 +94,6 @@ var server = http.createServer(app);
 server.listen(app.get('port'), function(){
   console.log('info: express server stated. listening on port ' + app.get('port'));
 });
+
+// init socket handler
 socketHandler.init(server);

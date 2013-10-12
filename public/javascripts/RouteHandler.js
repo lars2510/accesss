@@ -1,3 +1,8 @@
+/**
+* Route-Handler Class
+* Calculate, display and save different route types
+* @author lars schuettemeyer
+*/
 var RouteHandler = function(map, directionsService, directionsDisplay) {
   
   var trafficLayer = new google.maps.TrafficLayer(),
@@ -6,12 +11,19 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
       userData,
       con;
 
+  /**
+  * calculate carpooling route with waypoints
+  * @param {object} data - the user data
+  */
   this.setUserData = function(data) {
     userData = data;
     // build socket connection to route user, an callback function if route is requested
     con = new SocketHandler(userData.userId, _showRequestedRoute);
   };
 
+  /**
+  * calculate route or start carSharing / carPooling process
+  */
   this.routeRequest = function() {
     var selectedMode = $('#mode').val();
     var modeArray = selectedMode.split('-');
@@ -43,13 +55,17 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
   };
 
   /**
-  * calculate gmaps route 
+  * calculate route wrapper
+  * @param {object} routeType - the route type
   */
   this.calcRoute = function(routeType) {
     var routePoints = _getRoutePoints();
     _processRoute(routePoints, routeType);
   };
 
+  /**
+  * calculate car sharing route
+  */
   this.calcCarSharingRoute = function() {
     var routePoints = _getRoutePoints();
     var carPos = carSharingHandler.getCarPos();
@@ -57,11 +73,15 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
       routePoints.start = carPos;
       _processRoute(routePoints, 'DRIVING');
     } else {
-      console.log('error: MainController - CarSharing pos not available');
+      console.warn('error: RouteHandler - CarSharing pos not available');
     }
     carSharingHandler.removeMarker();
   };
 
+  /**
+  * show the requested route on the map
+  * @param {object} info - the route data
+  */
   var _showRequestedRoute = function(info) {
     if (carPoolingHandler) {
       carPoolingHandler.showRequestedRoute(info);
@@ -70,6 +90,11 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     } 
   };
 
+  /**
+  * calculate gmaps route and process the data
+  * @param {object} routePoints - the route points
+  * @param {string} routeType - the route type
+  */
   var _processRoute = function(routePoints, routeType) {
     // add trafic layer if user driving by car
     if(routeType === 'DRIVING') {
@@ -101,6 +126,9 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     });
   };
 
+  /**
+  * set route points from dom data
+  */
   var _getRoutePoints = function() {
     return {
       start: $('#js_start input').val(),
@@ -108,11 +136,21 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     }
   };
 
+  /**
+  * show directions on the map
+  * @param {object} res - gmaps route object
+  */
   var _showRoute = function(res) {
     directionsDisplay.setDirections(res);
     $('#js_direction').removeClass('ui-disabled');
   };
 
+  /**
+  * save route to database
+  * @param {object} routePoints - the start and end points
+  * @param {object} selectedMode - the route mode
+  * @param {object} routeRes - the gmaps route result
+  */
   var _saveRoute = function(routePoints, selectedMode, routeRes) {
     var time = routeRes.routes[0].legs[0].duration.value;
     var distance = routeRes.routes[0].legs[0].distance.value;
@@ -132,6 +170,10 @@ var RouteHandler = function(map, directionsService, directionsDisplay) {
     }
   };
 
+  /**
+  * calc and show route info
+  * @param {object} response - the gmaps route data
+  */
   var _showRouteInfo = function(response) {
     var km = (response.routes[0].legs[0].distance.value / 1000).toFixed(1) + " km"; 
     var min = (response.routes[0].legs[0].duration.value / 60 + 0.5).toFixed(0) + " min";

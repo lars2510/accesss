@@ -9,7 +9,6 @@ var car2goService = {
   * @param {function} cb - the callback function
   */
   getData: function(city, cb) {
-    console.log('info: car2go - get live car2go data');
     var queryUrl = 'https://www.car2go.com/api/v2.1/vehicles';
     var consumerKey = 'socialMobility';
     $.ajax({
@@ -22,10 +21,9 @@ var car2goService = {
       },
       dataType: 'jsonp'
     }).done(function(res) {
-     console.log('info: car2go - api request successful');
      cb(res);
     }).fail(function(jqXHR, textStatus) {
-      console.log('error: car2go - api error');
+      console.warn('error: car2goService - api error');
     });
   },
 
@@ -34,10 +32,9 @@ var car2goService = {
     $.ajax({
       url: '/vehicles.json'
     }).done(function(res) {
-     console.log('info: car2go - api request successful');
      cb(res);
     }).fail(function(jqXHR, textStatus) {
-      console.log('error: car2go - api error');
+      console.warn('error: car2goService - api error');
     });
   }
 }

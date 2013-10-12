@@ -1,5 +1,11 @@
+/**
+* Static accesss object with self envocing funktion 
+* creates singelton instance of MainController
+* @author lars schuettemeyer
+*/
 var accesss = (function(mainController){
   
+  // on DOM ready init main controller
   google.maps.event.addDomListener(window, 'load', mainController.init);
 
   return {

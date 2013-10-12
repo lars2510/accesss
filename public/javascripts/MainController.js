@@ -1,3 +1,9 @@
+/**
+* Main-Controller Class
+* initialises the google maps directioon and maps service
+* displays current user location on the map
+* @author lars schuettemeyer
+*/
 var MainController = function() {
 
   var directionsDisplay,
@@ -44,24 +50,41 @@ var MainController = function() {
     _registerListener();
   };
 
+  /**
+  * trigger map resize
+  */
   this.resizeMap = function() {
     google.maps.event.trigger(map, 'resize');
   };
 
+  /**
+  * calculate car sharing route
+  */
   this.startCarSharingRoute = function() {
     routeHandler.calcCarSharingRoute();    
   };
 
+  /**
+  * init user data
+  * @param {object} data - the user data
+  */
   this.setUserData = function(data) {
     userData = data;
     $('#mainTitle').html("Willkommen " + userData.name);
     routeHandler.setUserData(userData);
   };
 
+  /**
+  * calculate route
+  */
   var _routeRequest = function() {
     routeHandler.routeRequest();  
   };
 
+  /**
+  * display the current position on the map
+  * @param {object} pos - the current lang/lat pos
+  */
   var _displayCurrentLocation = function(pos) {
     myLatLng = new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
     var marker = new google.maps.Marker({
@@ -75,19 +98,22 @@ var MainController = function() {
           $('#js_start input').val(results[0].formatted_address);
         }
       } else {
-        console.log("error: maps - geocoder failed due to: " + status);
+        console.warn("error: MainController - geocoder failed due to: " + status);
       }
     });
   };
 
+  /**
+  * get current client location
+  */
   var _getCurLocation = function() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(_displayCurrentLocation, function(err) {
-        console.log("error: maps - geoloaction error");
+        console.warn("error: MainController - geoloaction error");
         console.log(err);
       });
     } else {
-      console.log("error: maps - geolocation not supported");
+      console.warn("error: MainController - geolocation not supported");
     }
   };
 

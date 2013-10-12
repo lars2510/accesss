@@ -1,3 +1,8 @@
+/**
+* Car-Pooling Class
+* calculates the best matching route for car-pooling
+* @author lars schuettemeyer
+*/
 CarPoolingHandler = function(con, directionsService, directionsDisplay) {
 
   var userData,
@@ -8,30 +13,55 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
       curRouteCnt = 0,
       maxDeviation = 20; // maximum deviation for carpooling
 
+  /**
+  * find matching route depending on user request
+  * @param {string} curRouteType - the current route type
+  */
   this.findMatchingRoutes = function(curRouteType) {
-    // if carpooling log for a driver and vice versa
+    // if carpooling look for a matching driver and vice versa
     var routeType = curRouteType === 'DRIVING' ? 'CARPOOLING' : 'DRIVING';
     dataService.getRouteData(routeType, _filterNearbyRoutes);
   };
 
+  /**
+  * init app with user and route data
+  * @param {object} userData
+  * @param {object} curRouteData
+  */
   this.init = function(userData, curRouteData) {
     _setUserData(userData);
     _setCurRouteData(curRouteData);
   }
 
+  /**
+  * show the requested route on map
+  * @param {object} info - route details
+  */
   this.showRequestedRoute = function(info) {
     _showPoolingRoute(info);
     _showRequestDialog(info);
   }
 
+  /**
+  * store user data to object
+  * @param {object} user
+  */
   var _setUserData = function(user) {
     userData = user;
   }
 
+  /**
+  * set current route data to object
+  * @param {object} data - the route data
+  */
   var _setCurRouteData = function(data) {
     curRouteData = data;
   }
 
+  /**
+  * start the filter process to get best nearby routes
+  * @param {array} availableRoutes - all available routes
+  */
   var _filterNearbyRoutes = function(availableRoutes) {
     matchingRoutes = [];
     matchingRoutesCnt = availableRoutes.length;
@@ -41,6 +71,11 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     });
   };
 
+  /**
+  * evaluate the deviation between current and pooling route
+  * @param {object} poolingRoute - the car pooling route
+  * @param {object} originRoute - the current route without deviation
+  */
   var _evaluateDistance = function(poolingRoute, originRoute) {
     // get total route data including waypoints to pick up or drop off someone
     var routeTotals = _computeSubrouteTotal(poolingRoute);
@@ -69,6 +104,10 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     }
   };
 
+  /**
+  * start the evaluation proces on social data
+  * @param {array} matchingRoutes - all matching routes
+  */
   var _filterSocialRoutes = function(matchingRoutes) {
     _.each(matchingRoutes, function(route, pos) {
       // get social user data
@@ -77,11 +116,16 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     });
   };
 
+  /**
+  * evaluate the sozial connection between driver and carpooler
+  * @param {integer} pos - route position in matchingRoutes list
+  * @param {integer} routeUserData - the carpooling user data
+  */
   var _evaluateSocialConnection = function(pos, routeUserData) {
     if (userData.userId !== routeUserData.userId) {
       var relationship = {};
       relationship.userData = routeUserData;
-      debugger;
+
       // direct friend
       relationship.friend = _.filter(routeUserData.friends.data, function(friend) {
         return userData.userId === friend.id;
@@ -108,6 +152,10 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     }
   };
 
+  /**
+  * evaluate the best route
+  * @param {array} matchingRoutes - filtered matching routes
+  */
   var _evaluateBestRoute = function(matchingRoutes) {
     var tmpRoute;
    
@@ -147,10 +195,14 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
         }
       }   
     } else {
-      console.log('leider keine passende route gefunden');
+      console.log('info: CarPoolingHandler - leider keine passende route gefunden');
     }
   };
 
+  /**
+  * show info dialog with the route data
+  * @param {object} route - the route data
+  */
   var _announceBestRoute = function(route) {
     var rel = route.relationship;
     var user = rel.userData;    
@@ -192,6 +244,10 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     $("#poolingPopup").popup('open');
   };
 
+  /**
+  * show info dialog to the driver
+  * @param {object} info - info about route an carpooler
+  */
   var _showRequestDialog = function(info) {
     $dialog = $("#poolingPopupRoute");
     $dialogHeadline = $dialog.find('.dialogHeadline');
@@ -204,6 +260,10 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
     $dialog.popup('open');  
   };
 
+  /**
+  * helper to compute the total distance an waypoint routes
+  * @param {object} route - the route data
+  */
   var _computeSubrouteTotal = function(route) {
     var totalDist = 0;
     var totalTime = 0;
@@ -219,7 +279,8 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
   };
 
   /**
-  * Carpooling route with data from user request
+  * show pooling route with wayponts on the map
+  * @param {object} route - the route data
   */
   var _showPoolingRoute = function(info) {
     var waypts = [{
@@ -245,7 +306,9 @@ CarPoolingHandler = function(con, directionsService, directionsDisplay) {
   };
 
   /**
-  * Carpooling calculation with waypoints where rider would could be picked up
+  * calculate carpooling route with waypoints
+  * @param {object} route - the route data
+  * @param {object} cb - the callback funtion
   */
   var _calcRouteWithWaypts = function(route, cb) {
     
